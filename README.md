@@ -9,12 +9,12 @@ although not all sensors support all functionality.
 
 | Device | Channels | Resolution | Max sps | Comparator | ProgGainAMP | Notes |
 |:----:|:----:|:----:|:----:|:----:|:----:|:----|
-| ADS1013 | 1 | 12 | 860  | N  | N |        |
-| ADS1014 | 1 | 12 | 860  | Y  | Y |        |
-| ADS1015 | 4 | 12 | 860  | Y  | Y |        |
-| ADS1113 | 1 | 16 | 3300 | N  | N |        |
-| ADS1114 | 1 | 16 | 3300 | Y  | Y |        |
-| ADS1115 | 4 | 16 | 3300 | Y  | Y | Tested |
+| ADS1013 | 1 | 12 | 3300 | N  | N |        | 
+| ADS1014 | 1 | 12 | 3300 | Y  | Y |        | 
+| ADS1015 | 4 | 12 | 3300 | Y  | Y |        | 
+| ADS1113 | 1 | 16 | 860  | N  | N |        |
+| ADS1114 | 1 | 16 | 860  | Y  | Y |        |
+| ADS1115 | 4 | 16 | 860  | Y  | Y | Tested |
 
 As the 1015 and the 1115 are both 4 channels these are the most 
 interesting from functionality point of view as these can also do
