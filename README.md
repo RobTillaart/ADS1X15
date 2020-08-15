@@ -76,6 +76,8 @@ The default value of 1 returns the conversion factor for any raw number.
 For all devices the index 0..7 can be used, see table below.
 - **getDataRate()** returns the current datarate (index).
 
+Datarate in samples per second.
+
 | datarate | ADS101x | ADS 111x |
 |:----:|----:|----:|
 | 0 | 128  | 8   |
@@ -89,7 +91,7 @@ For all devices the index 0..7 can be used, see table below.
 
 ### ReadADC 
 
-- **readADC(pin)** normal ADC functionality, pin = 
+- **readADC(pin)** normal ADC functionality, pin = 0..3
 
 ### ReadADC Differential
 
@@ -111,8 +113,8 @@ Also known as Conversion Ready pin, is not supported in this library.
 
 - Support comparator functionality
 - Improve documentation
-- Support for Alert/rdy pin
-- 1013/1113 cannot set gain (bug)
+- Support for Alert/rdy pin?
+- Improve support for samplerate
 
 
 ## Operation

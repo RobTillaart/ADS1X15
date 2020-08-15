@@ -1,14 +1,19 @@
 //
 //    FILE: ADS1X15.cpp
 //  AUTHOR: Rob Tillaart
-// VERSION: 0.2.0
+// VERSION: 0.2.1
 //    DATE: 2013-03-24
 // PUPROSE: Arduino library for ADS1015 and ADS1115
 //     URL: https://github.com/RobTillaart/ADS1X15
 //
+// HISTORY:
+// 0.0.0   2013-03-24 initial version
+// 0.0.1   2013-03-24 first working version
+// 0.1.0   2017-07-31 removed pre 1.0 support; added getVoltage
+// 0.2.0   2020-04-08 initial release; refactor ad fundum;
+// 0.2.1   2020-08-15 fix issue 2 gain; refactor
 
 #include "ADS1X15.h"
-
 
 #define ADS1015_CONVERSION_DELAY    1
 #define ADS1115_CONVERSION_DELAY    8
@@ -91,6 +96,13 @@ differs for different devices, check datasheet or readme.md
 #define ADS1X15_COMP_QUE_4_CONV         0x0002
 #define ADS1X15_COMP_QUE_NONE           0x0003
 
+// _CONFIG masks
+#define ADS_CONF_CHAN_1  0x00
+#define ADS_CONF_CHAN_4  0x01
+#define ADS_CONF_RES_12  0x00
+#define ADS_CONF_RES_16  0x04
+#define ADS_CONF_GAIN    0x10
+#define ADS_CONF_COMP    0x20
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -151,9 +163,10 @@ bool ADS1X15::isConnected()
 
 void ADS1X15::setGain(uint8_t gain)
 {
+  if (!(_config & ADS_CONF_GAIN)) gain = 0;
   switch (gain)
   {
-    default:
+    default:  // catch invalid values and go for the safest gain.
     case 0:  _gain = ADS1X15_PGA_6_144V;  break;
     case 1:  _gain = ADS1X15_PGA_4_096V;  break;
     case 2:  _gain = ADS1X15_PGA_2_048V;  break;
@@ -165,6 +178,7 @@ void ADS1X15::setGain(uint8_t gain)
 
 uint8_t ADS1X15::getGain()
 {
+  if (!(_config & ADS_CONF_GAIN)) return 0;
   switch (_gain)
   {
     case ADS1X15_PGA_6_144V: return 0;
@@ -174,7 +188,7 @@ uint8_t ADS1X15::getGain()
     case ADS1X15_PGA_0_512V: return 8;
     case ADS1X15_PGA_0_256V: return 16;
   }
-  return 0xFF;
+  return ADS1X15_INVALID_GAIN;
 }
 
 float ADS1X15::toVoltage(int16_t val)
@@ -185,8 +199,14 @@ float ADS1X15::toVoltage(int16_t val)
   if (volts < 0) return volts;
 
   volts *= val;
-  if (_type > 100) volts /= 32767;  // val = 16 bits  TODO CHECK
-  else             volts /= 2047;   // val = 12 bits
+  if (_config & ADS_CONF_RES_16)
+  {
+    volts /= 32767;  // val = 16 bits - signed
+  }
+  else
+  {
+    volts /= 2047;   // val = 12 bits - signed
+  }
   return volts;
 }
 
@@ -201,7 +221,7 @@ float ADS1X15::getMaxVoltage()
     case 8:  return 0.512;
     case 16: return 0.256;
   }
-  return -100;  // MAGIC NUMBER 
+  return ADS1X15_INVALID_VOLTAGE;
 }
 
 void ADS1X15::setMode(uint8_t mode)
@@ -288,7 +308,7 @@ int16_t ADS1X15::getLastValue()
 ADS1013::ADS1013(uint8_t address)
 {
   _address = address;
-  _type = 13;
+  _config = 0x00;
   _conversionDelay = ADS1015_CONVERSION_DELAY;
   _bitShift = 4;
   _maxPorts = 1;
@@ -297,7 +317,7 @@ ADS1013::ADS1013(uint8_t address)
 ADS1014::ADS1014(uint8_t address)
 {
   _address = address;
-  _type = 14;
+  _config = 0x30;
   _conversionDelay = ADS1015_CONVERSION_DELAY;
   _bitShift = 4;
   _maxPorts = 1;
@@ -306,7 +326,7 @@ ADS1014::ADS1014(uint8_t address)
 ADS1015::ADS1015(uint8_t address)
 {
   _address = address;
-  _type = 15;
+  _config = 0x34;
   _conversionDelay = ADS1015_CONVERSION_DELAY;
   _bitShift = 4;
   _maxPorts = 4;
@@ -334,7 +354,7 @@ int16_t ADS1015::readADC_Differential_2_3()
 ADS1113::ADS1113(uint8_t address)
 {
   _address = address;
-  _type = 113;
+  _config = 0x01;
   _conversionDelay = ADS1115_CONVERSION_DELAY;
   _bitShift = 0;
   _maxPorts = 1;
@@ -343,7 +363,7 @@ ADS1113::ADS1113(uint8_t address)
 ADS1114::ADS1114(uint8_t address)
 {
   _address = address;
-  _type = 114;
+  _config = 0x31;
   _conversionDelay = ADS1115_CONVERSION_DELAY;
   _bitShift = 0;
   _maxPorts = 1;
@@ -352,7 +372,7 @@ ADS1114::ADS1114(uint8_t address)
 ADS1115::ADS1115(uint8_t address)
 {
   _address = address;
-  _type = 115;
+  _config = 0x35;
   _conversionDelay = ADS1115_CONVERSION_DELAY;
   _bitShift = 0;
   _maxPorts = 4;

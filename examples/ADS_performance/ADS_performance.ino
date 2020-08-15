@@ -24,7 +24,7 @@
 // ADS1114 ADS(0x48);
 ADS1115 ADS(0x48);
 
-uint32_t start, stop, d1, d2;
+uint32_t start, d1, d2;
 int x;
 
 void setup()
