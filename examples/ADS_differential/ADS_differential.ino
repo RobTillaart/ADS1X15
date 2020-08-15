@@ -1,7 +1,7 @@
 //
 //    FILE: ADS_differential.ino
 //  AUTHOR: Rob.Tillaart
-// VERSION: 0.1.0
+// VERSION: 0.1.1
 // PURPOSE: read differential
 //
 
@@ -43,19 +43,19 @@ void setup()
 
 void loop() 
 {
-  uint16_t val_01 = ADS.readADC_Differential_0_1();  
-  uint16_t val_03 = ADS.readADC_Differential_0_3();  
-  uint16_t val_13 = ADS.readADC_Differential_1_3();  
-  uint16_t val_23 = ADS.readADC_Differential_2_3(); 
+  int16_t val_01 = ADS.readADC_Differential_0_1();  
+  int16_t val_03 = ADS.readADC_Differential_0_3();  
+  int16_t val_13 = ADS.readADC_Differential_1_3();  
+  int16_t val_23 = ADS.readADC_Differential_2_3(); 
   float volts_01 = ADS.toVoltage(val_01); 
   float volts_03 = ADS.toVoltage(val_03); 
   float volts_13 = ADS.toVoltage(val_13); 
   float volts_23 = ADS.toVoltage(val_23); 
 
   Serial.print("\tval_01: "); Serial.print(val_01); Serial.print("\t"); Serial.println(volts_01, 3);
-//  Serial.print("\tval_03: "); Serial.println(val_03); Serial.print("\t"); Serial.println(volts_03, 3);
-//  Serial.print("\tval_13: "); Serial.println(val_13); Serial.print("\t"); Serial.println(volts_13, 3);
-//  Serial.print("\tval_23: "); Serial.println(val_23); Serial.print("\t"); Serial.println(volts_23, 3);
+//  Serial.print("\tval_03: "); Serial.print(val_03); Serial.print("\t"); Serial.println(volts_03, 3);
+//  Serial.print("\tval_13: "); Serial.print(val_13); Serial.print("\t"); Serial.println(volts_13, 3);
+//  Serial.print("\tval_23: "); Serial.print(val_23); Serial.print("\t"); Serial.println(volts_23, 3);
 //  Serial.println();
 
   delay(1000);

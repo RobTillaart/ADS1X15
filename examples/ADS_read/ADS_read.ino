@@ -1,7 +1,7 @@
 //
 //    FILE: ADS_read.ino
 //  AUTHOR: Rob.Tillaart
-// VERSION: 0.2.0
+// VERSION: 0.2.1
 // PURPOSE: read analog inputs - straightforward.
 //
 
@@ -32,10 +32,10 @@ void loop()
 {
   ADS.setGain(0);
 
-  uint16_t val_0 = ADS.readADC(0);  
-  uint16_t val_1 = ADS.readADC(1);  
-  uint16_t val_2 = ADS.readADC(2);  
-  uint16_t val_3 = ADS.readADC(3);  
+  int16_t val_0 = ADS.readADC(0);  
+  int16_t val_1 = ADS.readADC(1);  
+  int16_t val_2 = ADS.readADC(2);  
+  int16_t val_3 = ADS.readADC(3);  
 
   float f = ADS.toVoltage(1);  // voltage factor
 
