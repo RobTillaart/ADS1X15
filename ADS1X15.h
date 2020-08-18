@@ -2,7 +2,7 @@
 //
 //    FILE: ADS1X15.H
 //  AUTHOR: Rob Tillaart
-// VERSION: 0.2.1
+// VERSION: 0.2.2
 //    DATE: 2013-03-24
 // PUPROSE: Arduino library for ADS1015 and ADS1115
 //     URL: https://github.com/RobTillaart/ADS1X15
@@ -11,7 +11,7 @@
 #include "Arduino.h"
 #include "Wire.h"
 
-#define ADS1X15_LIB_VERSION               "0.2.1"
+#define ADS1X15_LIB_VERSION               "0.2.2"
 
 // allow compile time default address
 // address in { 0x48, 0x49, 0x4A, 0x4B }, no test...
@@ -31,6 +31,9 @@
 class ADS1X15
 {
 public:
+#if defined (ESP8266) || defined(ESP32)
+  void begin(uint8_t sda, uint8_t scl);
+#endif
   bool     begin();
   bool     isBusy();
   bool     isConnected();

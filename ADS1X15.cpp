@@ -1,7 +1,7 @@
 //
 //    FILE: ADS1X15.cpp
 //  AUTHOR: Rob Tillaart
-// VERSION: 0.2.1
+// VERSION: 0.2.2
 //    DATE: 2013-03-24
 // PUPROSE: Arduino library for ADS1015 and ADS1115
 //     URL: https://github.com/RobTillaart/ADS1X15
@@ -12,6 +12,7 @@
 // 0.1.0   2017-07-31 removed pre 1.0 support; added getVoltage
 // 0.2.0   2020-04-08 initial release; refactor ad fundum;
 // 0.2.1   2020-08-15 fix issue 2 gain; refactor
+// 0.2.2   2020-08-18 add begin(sda, scl) for ESP32
 
 #include "ADS1X15.h"
 
@@ -141,10 +142,19 @@ ADS1X15::ADS1X15()
 // 
 // PUBLIC
 //
+#if defined (ESP8266) || defined(ESP32)
+bool ADS1X15::begin(uint8_t sda, uint8_t scl)
+{
+  Wire.begin(sda, scl);
+  if (_address < 0x48 || _address > 0x4B) return false;
+  return true;
+}
+#endif
+
 bool ADS1X15::begin() 
 {
-  if (_address < 0x48 || _address > 0x4B) return false;
   Wire.begin();
+  if (_address < 0x48 || _address > 0x4B) return false;
   return true;
 }
 
