@@ -1,7 +1,7 @@
 //
 //    FILE: ADS1X15.cpp
 //  AUTHOR: Rob Tillaart
-// VERSION: 0.2.2
+// VERSION: 0.2.3
 //    DATE: 2013-03-24
 // PUPROSE: Arduino library for ADS1015 and ADS1115
 //     URL: https://github.com/RobTillaart/ADS1X15
@@ -13,6 +13,7 @@
 // 0.2.0   2020-04-08 initial release; refactor ad fundum;
 // 0.2.1   2020-08-15 fix issue 2 gain; refactor
 // 0.2.2   2020-08-18 add begin(sda, scl) for ESP32
+// 0.2.3   2020-08-20 add comparator code + async mode
 
 #include "ADS1X15.h"
 
@@ -41,7 +42,7 @@
 #define ADS1X15_MUX_DIFF_0_3        0x1000
 #define ADS1X15_MUX_DIFF_1_3        0x2000
 #define ADS1X15_MUX_DIFF_2_3        0x3000
-             // read pin
+// read single
 #define ADS1X15_READ_0              0x4000
 #define ADS1X15_READ_1              0x5000
 #define ADS1X15_READ_2              0x6000
@@ -50,7 +51,7 @@
 
 // BIT 9-11     gain                        // (0..5) << 9
 #define ADS1X15_PGA_6_144V          0x0000  // voltage
-#define ADS1X15_PGA_4_096V          0x0200  // 
+#define ADS1X15_PGA_4_096V          0x0200  //
 #define ADS1X15_PGA_2_048V          0x0400  // default
 #define ADS1X15_PGA_1_024V          0x0600
 #define ADS1X15_PGA_0_512V          0x0800
@@ -103,12 +104,13 @@ differs for different devices, check datasheet or readme.md
 #define ADS_CONF_RES_12  0x00
 #define ADS_CONF_RES_16  0x04
 #define ADS_CONF_GAIN    0x10
-#define ADS_CONF_COMP    0x20
+#define ADS_CONF_COMP    0x20          // TODO restrict calls.
+
 
 /////////////////////////////////////////////////////////////////////////
 
 
-static void writeRegister(uint8_t address, uint8_t reg, uint16_t value) 
+static void writeRegister(uint8_t address, uint8_t reg, uint16_t value)
 {
   Wire.beginTransmission(address);
   Wire.write((uint8_t)reg);
@@ -117,29 +119,29 @@ static void writeRegister(uint8_t address, uint8_t reg, uint16_t value)
   Wire.endTransmission();
 }
 
-static uint16_t readRegister(uint8_t address, uint8_t reg) 
+static uint16_t readRegister(uint8_t address, uint8_t reg)
 {
   Wire.beginTransmission(address);
   Wire.write(reg);
   Wire.endTransmission();
-  
+
   Wire.requestFrom(address, (uint8_t) 2);
   uint16_t value = Wire.read() << 8;
   value += Wire.read();
-  return value;  
+  return value;
 }
 
 //
 // CONSTRUCTOR
 //
-ADS1X15::ADS1X15() 
+ADS1X15::ADS1X15()
 {
   setGain(0);      // _gain = ADS1X15_PGA_6_144V;
   setMode(1);      // _mode = ADS1X15_MODE_SINGLE;
   setDataRate(4);  // middle speed, depends on device.
 }
 
-// 
+//
 // PUBLIC
 //
 #if defined (ESP8266) || defined(ESP32)
@@ -151,7 +153,7 @@ bool ADS1X15::begin(uint8_t sda, uint8_t scl)
 }
 #endif
 
-bool ADS1X15::begin() 
+bool ADS1X15::begin()
 {
   Wire.begin();
   if (_address < 0x48 || _address > 0x4B) return false;
@@ -266,7 +268,45 @@ uint8_t ADS1X15::getDataRate(void)
   return (_datarate >> 5);  // convert mask back to 0..7
 }
 
-int16_t ADS1X15::_readADC(uint16_t readmode) 
+int16_t ADS1X15::_readADC(uint16_t readmode)
+{
+  _requestADC(readmode);
+  if (_mode == ADS1X15_MODE_SINGLE)
+  {
+    while ( isBusy() ) yield();   // wait for conversion; yield for ESP.
+  }
+  else
+  {
+    delay(_conversionDelay);      // TODO CHECK if needed
+  }
+  return getLastValue();
+}
+
+int16_t ADS1X15::readADC(uint8_t pin)
+{
+  if (pin >= _maxPorts) return 0;
+  uint16_t mode = ((4 + pin) << 12); // pin to mask
+  return _readADC(mode);
+}
+
+void  ADS1X15::requestADC_Differential_0_1()
+{
+  _requestADC(ADS1X15_MUX_DIFF_0_1);
+}
+
+int16_t ADS1X15::readADC_Differential_0_1()
+{
+  return _readADC(ADS1X15_MUX_DIFF_0_1);
+}
+
+void ADS1X15::requestADC(uint8_t pin)
+{
+  if (pin >= _maxPorts) return;
+  uint16_t mode = ((4 + pin) << 12);   // pin to mask
+  _requestADC(mode);
+}
+
+void ADS1X15::_requestADC(uint16_t readmode)
 {
   // write to register is needed in continuous mode as other flags can be changed
   uint16_t config = ADS1X15_OS_START_SINGLE;  // bit 15     force wake up if needed
@@ -274,42 +314,43 @@ int16_t ADS1X15::_readADC(uint16_t readmode)
   config |= _gain;                            // bit 9-11
   config |= _mode;                            // bit 8
   config |= _datarate;                        // bit 5-7
-  config |= ADS1X15_COMP_MODE_TRADITIONAL;    // bit 4      comparator modi 
-  config |= ADS1X15_COMP_POL_ACTIV_LOW;       // bit 3      ALERT active value 
-  config |= ADS1X15_COMP_NON_LATCH;           // bit 2      ALERT latching  
-  config |= ADS1X15_COMP_QUE_NONE;            // bit 0..1   ALERT mode
+  if (_compMode)  config |= ADS1X15_COMP_MODE_WINDOW;         // bit 4      comparator modi
+  else            config |= ADS1X15_COMP_MODE_TRADITIONAL;
+  if (_compPol)   config |= ADS1X15_COMP_POL_ACTIV_HIGH;      // bit 3      ALERT active value
+  else            config |= ADS1X15_COMP_POL_ACTIV_LOW;
+  if (_compLatch) config |= ADS1X15_COMP_LATCH;
+  else            config |= ADS1X15_COMP_NON_LATCH;           // bit 2      ALERT latching
+  config |= _compQueConvert;                                  // bit 0..1   ALERT mode
   writeRegister(_address, ADS1X15_REG_CONFIG, config);
-
-  if (_mode == ADS1X15_MODE_SINGLE)
-  {
-    while ( isBusy() ) yield();   // wait for conversion; yield for ESP.
-  } 
-  else
-  {
-    delay(_conversionDelay);      // TODO CHECK if needed
-  }
-
-  return getLastValue();
-}
-
-int16_t ADS1X15::readADC(uint8_t pin) 
-{
-  if (pin >= _maxPorts) return 0;
-  uint16_t mode = ((4 + pin) << 12); // pin to mask
-  return _readADC(mode);
-}
-
-int16_t ADS1X15::readADC_Differential_0_1() 
-{
-  return _readADC(ADS1X15_MUX_DIFF_0_1);
 }
 
 int16_t ADS1X15::getLastValue()
 {
   int16_t raw = readRegister(_address, ADS1X15_REG_CONVERT);
   if (_bitShift) raw >>= _bitShift;  // Shift 12-bit results
-  return raw; 
+  return raw;
 }
+
+void ADS1X15::setComparatorThresholdLow(int16_t lo)
+{
+  writeRegister(_address, ADS1X15_REG_LOW_THRESHOLD, lo);
+};
+
+int16_t ADS1X15::getComparatorThresholdLow()
+{
+  return readRegister(_address, ADS1X15_REG_LOW_THRESHOLD);
+};
+
+void ADS1X15::setComparatorThresholdHigh(int16_t hi)
+{
+  writeRegister(_address, ADS1X15_REG_HIGH_THRESHOLD, hi);
+};
+
+int16_t ADS1X15::getComparatorThresholdHigh()
+{
+  return readRegister(_address, ADS1X15_REG_HIGH_THRESHOLD);
+};
+
 
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -342,19 +383,34 @@ ADS1015::ADS1015(uint8_t address)
   _maxPorts = 4;
 }
 
-int16_t ADS1015::readADC_Differential_0_3() 
+int16_t ADS1015::readADC_Differential_0_3()
 {
   return _readADC(ADS1X15_MUX_DIFF_0_3);
 }
 
-int16_t ADS1015::readADC_Differential_1_3() 
+int16_t ADS1015::readADC_Differential_1_3()
 {
   return _readADC(ADS1X15_MUX_DIFF_1_3);
 }
 
-int16_t ADS1015::readADC_Differential_2_3() 
+int16_t ADS1015::readADC_Differential_2_3()
 {
   return _readADC(ADS1X15_MUX_DIFF_2_3);
+}
+
+void ADS1015::requestADC_Differential_0_3()
+{
+  _requestADC(ADS1X15_MUX_DIFF_0_3);
+}
+
+void ADS1015::requestADC_Differential_1_3()
+{
+  _requestADC(ADS1X15_MUX_DIFF_1_3);
+}
+
+void ADS1015::requestADC_Differential_2_3()
+{
+  _requestADC(ADS1X15_MUX_DIFF_2_3);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -388,19 +444,34 @@ ADS1115::ADS1115(uint8_t address)
   _maxPorts = 4;
 }
 
-int16_t ADS1115::readADC_Differential_0_3() 
+int16_t ADS1115::readADC_Differential_0_3()
 {
   return _readADC(ADS1X15_MUX_DIFF_0_3);
 }
 
-int16_t ADS1115::readADC_Differential_1_3() 
+int16_t ADS1115::readADC_Differential_1_3()
 {
   return _readADC(ADS1X15_MUX_DIFF_1_3);
 }
 
-int16_t ADS1115::readADC_Differential_2_3() 
+int16_t ADS1115::readADC_Differential_2_3()
 {
   return _readADC(ADS1X15_MUX_DIFF_2_3);
+}
+
+void ADS1115::requestADC_Differential_0_3()
+{
+  _requestADC(ADS1X15_MUX_DIFF_0_3);
+}
+
+void ADS1115::requestADC_Differential_1_3()
+{
+  _requestADC(ADS1X15_MUX_DIFF_1_3);
+}
+
+void ADS1115::requestADC_Differential_2_3()
+{
+  _requestADC(ADS1X15_MUX_DIFF_2_3);
 }
 
 // --- END OF FILE
