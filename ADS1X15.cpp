@@ -1,7 +1,7 @@
 //
 //    FILE: ADS1X15.cpp
 //  AUTHOR: Rob Tillaart
-// VERSION: 0.2.3
+// VERSION: 0.2.4
 //    DATE: 2013-03-24
 // PUPROSE: Arduino library for ADS1015 and ADS1115
 //     URL: https://github.com/RobTillaart/ADS1X15
@@ -14,6 +14,8 @@
 // 0.2.1   2020-08-15 fix issue 2 gain; refactor
 // 0.2.2   2020-08-18 add begin(sda, scl) for ESP32
 // 0.2.3   2020-08-20 add comparator code + async mode
+// 0.2.4   2020-08-26 check readme.md  and minor fixes
+
 
 #include "ADS1X15.h"
 
@@ -42,9 +44,9 @@
 #define ADS1X15_MUX_DIFF_0_3        0x1000
 #define ADS1X15_MUX_DIFF_1_3        0x2000
 #define ADS1X15_MUX_DIFF_2_3        0x3000
-// read single
-#define ADS1X15_READ_0              0x4000
-#define ADS1X15_READ_1              0x5000
+//              read single
+#define ADS1X15_READ_0              0x4000  // pin << 12
+#define ADS1X15_READ_1              0x5000  // pin = 0..3
 #define ADS1X15_READ_2              0x6000
 #define ADS1X15_READ_3              0x7000
 
@@ -76,10 +78,6 @@ differs for different devices, check datasheet or readme.md
 | 7 | 3300 | 860 |
 */
 
-/*
- * COMPARATOR MODE IS NOT IMPLEMENTED YET
- */
-
 // BIT 4 comparator modi                    // 1 << 4
 #define ADS1X15_COMP_MODE_TRADITIONAL   0x0000
 #define ADS1X15_COMP_MODE_WINDOW        0x0010
@@ -93,23 +91,35 @@ differs for different devices, check datasheet or readme.md
 #define ADS1X15_COMP_LATCH              0x0004
 
 // BIT 0-1 ALERT mode                       // (0..3)
-#define ADS1X15_COMP_QUE_1_CONV         0x0000
-#define ADS1X15_COMP_QUE_2_CONV         0x0001
-#define ADS1X15_COMP_QUE_4_CONV         0x0002
-#define ADS1X15_COMP_QUE_NONE           0x0003
+#define ADS1X15_COMP_QUE_1_CONV         0x0000  // trigger alert after 1 convert
+#define ADS1X15_COMP_QUE_2_CONV         0x0001  // trigger alert after 2 converts
+#define ADS1X15_COMP_QUE_4_CONV         0x0002  // trigger alert after 4 converts
+#define ADS1X15_COMP_QUE_NONE           0x0003  // dosable comparator
 
 // _CONFIG masks
+//
+// | bit  | description |
+// |:----:|:----|
+// |  0   | # channels |
+// |  1   | -  |
+// |  2   | resolution |
+// |  3   | - |
+// |  4   | GAIN supported |
+// |  5   | COMPARATOR supported |
+// |  6   | - |
+// |  7   | - |
 #define ADS_CONF_CHAN_1  0x00
 #define ADS_CONF_CHAN_4  0x01
 #define ADS_CONF_RES_12  0x00
 #define ADS_CONF_RES_16  0x04
 #define ADS_CONF_GAIN    0x10
-#define ADS_CONF_COMP    0x20          // TODO restrict calls.
+#define ADS_CONF_COMP    0x20
 
 
 /////////////////////////////////////////////////////////////////////////
-
-
+//
+// STATIC MEMBERS
+// 
 static void writeRegister(uint8_t address, uint8_t reg, uint16_t value)
 {
   Wire.beginTransmission(address);
@@ -131,8 +141,9 @@ static uint16_t readRegister(uint8_t address, uint8_t reg)
   return value;
 }
 
+//////////////////////////////////////////////////////
 //
-// CONSTRUCTOR
+// BASE CONSTRUCTOR
 //
 ADS1X15::ADS1X15()
 {
@@ -141,6 +152,7 @@ ADS1X15::ADS1X15()
   setDataRate(4);  // middle speed, depends on device.
 }
 
+//////////////////////////////////////////////////////
 //
 // PUBLIC
 //
@@ -153,6 +165,8 @@ bool ADS1X15::begin(uint8_t sda, uint8_t scl)
 }
 #endif
 
+// TODO address should become parameter of begin()
+//      that allows one to 'search' for it in setup().
 bool ADS1X15::begin()
 {
   Wire.begin();
@@ -163,7 +177,7 @@ bool ADS1X15::begin()
 bool ADS1X15::isBusy()
 {
   uint16_t val = readRegister(_address, ADS1X15_REG_CONFIG);
-  if ((val & ADS1X15_OS_NOT_BUSY) > 0) return false;
+  if ((val & ADS1X15_OS_NOT_BUSY) != 0) return false;
   return true;
 }
 
@@ -213,11 +227,11 @@ float ADS1X15::toVoltage(int16_t val)
   volts *= val;
   if (_config & ADS_CONF_RES_16)
   {
-    volts /= 32767;  // val = 16 bits - signed
+    volts /= 32767;  // val = 16 bits - sign bir = 15 bits mantissa
   }
   else
   {
-    volts /= 2047;   // val = 12 bits - signed
+    volts /= 2047;   // val = 12 bits - sign bit = 11 bit mantissa
   }
   return volts;
 }
@@ -253,33 +267,19 @@ uint8_t ADS1X15::getMode(void)
     case ADS1X15_MODE_CONTINUE: return 0;
     case ADS1X15_MODE_SINGLE:   return 1;
   }
-  return 0xFF;
+  return ADS1X15_INVALID_MODE;
 }
 
 void ADS1X15::setDataRate(uint8_t dataRate)
 {
   _datarate = dataRate;
   if (_datarate > 7) _datarate = 4;  // default
-  _datarate <<= 5;          // convert 0..7 to mask.
+  _datarate <<= 5;      // convert 0..7 to mask needed.
 }
 
 uint8_t ADS1X15::getDataRate(void)
 {
   return (_datarate >> 5);  // convert mask back to 0..7
-}
-
-int16_t ADS1X15::_readADC(uint16_t readmode)
-{
-  _requestADC(readmode);
-  if (_mode == ADS1X15_MODE_SINGLE)
-  {
-    while ( isBusy() ) yield();   // wait for conversion; yield for ESP.
-  }
-  else
-  {
-    delay(_conversionDelay);      // TODO CHECK if needed
-  }
-  return getLastValue();
 }
 
 int16_t ADS1X15::readADC(uint8_t pin)
@@ -306,25 +306,7 @@ void ADS1X15::requestADC(uint8_t pin)
   _requestADC(mode);
 }
 
-void ADS1X15::_requestADC(uint16_t readmode)
-{
-  // write to register is needed in continuous mode as other flags can be changed
-  uint16_t config = ADS1X15_OS_START_SINGLE;  // bit 15     force wake up if needed
-  config |= readmode;                         // bit 12-14
-  config |= _gain;                            // bit 9-11
-  config |= _mode;                            // bit 8
-  config |= _datarate;                        // bit 5-7
-  if (_compMode)  config |= ADS1X15_COMP_MODE_WINDOW;         // bit 4      comparator modi
-  else            config |= ADS1X15_COMP_MODE_TRADITIONAL;
-  if (_compPol)   config |= ADS1X15_COMP_POL_ACTIV_HIGH;      // bit 3      ALERT active value
-  else            config |= ADS1X15_COMP_POL_ACTIV_LOW;
-  if (_compLatch) config |= ADS1X15_COMP_LATCH;
-  else            config |= ADS1X15_COMP_NON_LATCH;           // bit 2      ALERT latching
-  config |= _compQueConvert;                                  // bit 0..1   ALERT mode
-  writeRegister(_address, ADS1X15_REG_CONFIG, config);
-}
-
-int16_t ADS1X15::getLastValue()
+int16_t ADS1X15::getValue()
 {
   int16_t raw = readRegister(_address, ADS1X15_REG_CONVERT);
   if (_bitShift) raw >>= _bitShift;  // Shift 12-bit results
@@ -352,9 +334,46 @@ int16_t ADS1X15::getComparatorThresholdHigh()
 };
 
 
+//////////////////////////////////////////////////////
+//
+// PRIVATE
+//
+int16_t ADS1X15::_readADC(uint16_t readmode)
+{
+  _requestADC(readmode);
+  if (_mode == ADS1X15_MODE_SINGLE)
+  {
+    while ( isBusy() ) yield();   // wait for conversion; yield for ESP.
+  }
+  else
+  {
+    delay(_conversionDelay);      // TODO needed in continuous mode?
+  }
+  return getLastValue();
+}
+
+void ADS1X15::_requestADC(uint16_t readmode)
+{
+  // write to register is needed in continuous mode as other flags can be changed
+  uint16_t config = ADS1X15_OS_START_SINGLE;  // bit 15     force wake up if needed
+  config |= readmode;                         // bit 12-14
+  config |= _gain;                            // bit 9-11
+  config |= _mode;                            // bit 8
+  config |= _datarate;                        // bit 5-7
+  if (_compMode)  config |= ADS1X15_COMP_MODE_WINDOW;         // bit 4      comparator modi
+  else            config |= ADS1X15_COMP_MODE_TRADITIONAL;
+  if (_compPol)   config |= ADS1X15_COMP_POL_ACTIV_HIGH;      // bit 3      ALERT active value
+  else            config |= ADS1X15_COMP_POL_ACTIV_LOW;
+  if (_compLatch) config |= ADS1X15_COMP_LATCH;
+  else            config |= ADS1X15_COMP_NON_LATCH;           // bit 2      ALERT latching
+  config |= _compQueConvert;                                  // bit 0..1   ALERT mode
+  writeRegister(_address, ADS1X15_REG_CONFIG, config);
+}
+
+
 ///////////////////////////////////////////////////////////////////////////
 //
-// Derived classes from ADS1X15
+// ADS1013
 //
 ADS1013::ADS1013(uint8_t address)
 {
@@ -365,6 +384,11 @@ ADS1013::ADS1013(uint8_t address)
   _maxPorts = 1;
 }
 
+
+///////////////////////////////////////////////////////////////////////////
+//
+// ADS1014
+//
 ADS1014::ADS1014(uint8_t address)
 {
   _address = address;
@@ -374,6 +398,11 @@ ADS1014::ADS1014(uint8_t address)
   _maxPorts = 1;
 }
 
+
+///////////////////////////////////////////////////////////////////////////
+//
+// ADS1015
+//
 ADS1015::ADS1015(uint8_t address)
 {
   _address = address;
@@ -415,7 +444,7 @@ void ADS1015::requestADC_Differential_2_3()
 
 ///////////////////////////////////////////////////////////////////////////
 //
-// Derived classes from ADS1X15
+// ADS1113
 //
 ADS1113::ADS1113(uint8_t address)
 {
@@ -426,6 +455,11 @@ ADS1113::ADS1113(uint8_t address)
   _maxPorts = 1;
 }
 
+
+///////////////////////////////////////////////////////////////////////////
+//
+// ADS1114
+//
 ADS1114::ADS1114(uint8_t address)
 {
   _address = address;
@@ -435,6 +469,11 @@ ADS1114::ADS1114(uint8_t address)
   _maxPorts = 1;
 }
 
+
+///////////////////////////////////////////////////////////////////////////
+//
+// ADS1115
+//
 ADS1115::ADS1115(uint8_t address)
 {
   _address = address;

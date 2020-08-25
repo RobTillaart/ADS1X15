@@ -13,6 +13,7 @@ ADS1115	KEYWORD1
 # Methods and Functions (KEYWORD2)
 begin	KEYWORD2
 isBusy	KEYWORD2
+isReady()	KEYWORD2
 isConnected	KEYWORD2
 
 setGain	KEYWORD2
