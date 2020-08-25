@@ -2,7 +2,7 @@
 //
 //    FILE: ADS1X15.H
 //  AUTHOR: Rob Tillaart
-// VERSION: 0.2.3
+// VERSION: 0.2.4
 //    DATE: 2013-03-24
 // PUPROSE: Arduino library for ADS1015 and ADS1115
 //     URL: https://github.com/RobTillaart/ADS1X15
@@ -11,7 +11,7 @@
 #include "Arduino.h"
 #include "Wire.h"
 
-#define ADS1X15_LIB_VERSION               "0.2.3"
+#define ADS1X15_LIB_VERSION               "0.2.4"
 
 // allow compile time default address
 // address in { 0x48, 0x49, 0x4A, 0x4B }, no test...
@@ -26,6 +26,7 @@
 
 #define ADS1X15_INVALID_VOLTAGE     -100
 #define ADS1X15_INVALID_GAIN        0xFF
+#define ADS1X15_INVALID_MODE        0xFE
 
 
 class ADS1X15
@@ -49,27 +50,28 @@ public:
 
   // both may return ADS1X15_INVALID_VOLTAGE if the gain is invalid.
   float    toVoltage(int16_t val = 1);   //  converts raw to voltage
-  float    getMaxVoltage();              //  -100 == invalid gain error
+  float    getMaxVoltage();              //  -100 == invalid voltage error
 
   // 0  =  CONTINUOUS
   // 1  =  SINGLE      default
   void     setMode(uint8_t mode = 1);
-  uint8_t  getMode();                 //  0xFF == invalid mode error.
+  uint8_t  getMode();                    //  0xFE == invalid mode error.
 
   // 0  =  slowest
   // 7  =  fastest
   // 4  =  default
   void     setDataRate(uint8_t dataRate);
-  uint8_t  getDataRate();  // actual speed depends on device
+  uint8_t  getDataRate();                // actual speed depends on device
 
   int16_t  readADC(uint8_t pin);
   int16_t  readADC_Differential_0_1();
 
   // used by continuous mode and async mode.
-  int16_t  getLastValue();
+  int16_t  getLastValue() { return getValue(); };  // will be obsolete in future
+  int16_t  getValue();
 
   // ASYNC INTERFACE
-  // requestADC(pin) -> isBusy() -> getLastValue(); 
+  // requestADC(pin) -> isBusy() or isReady() -> getLastValue(); 
   // see examples
   void     requestADC(uint8_t pin);
   void     requestADC_Differential_0_1();
@@ -78,8 +80,8 @@ public:
 
 
   // COMPARATOR
-  // 0    = TRADITIONAL   > high => on            < low = off
-  // else = WINDOW        > high or < low = on    between = off
+  // 0    = TRADITIONAL   > high          => on      < low   => off
+  // else = WINDOW        > high or < low => on      between => off
   void     setComparatorMode(uint8_t mode) { _compMode = mode == 0 ? 0 : 1; };
   uint8_t  getComparatorMode()             { return _compMode; };
 
@@ -128,7 +130,9 @@ protected:
   uint16_t _mode;
   uint16_t _datarate;
 
-  // COMPARATOR
+  // COMPARATOR vars
+  // TODO merge these into one COMPARATOR MASK?
+  //      would speed up code in _requestADC() and save 3 bytes RAM.
   uint8_t  _compMode       = 0;
   uint8_t  _compPol        = 1;
   uint8_t  _compLatch      = 0;
