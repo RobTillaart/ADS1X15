@@ -2,7 +2,7 @@
 //
 //    FILE: ADS1X15.H
 //  AUTHOR: Rob Tillaart
-// VERSION: 0.2.4
+// VERSION: 0.2.5
 //    DATE: 2013-03-24
 // PUPROSE: Arduino library for ADS1015 and ADS1115
 //     URL: https://github.com/RobTillaart/ADS1X15
@@ -11,7 +11,7 @@
 #include "Arduino.h"
 #include "Wire.h"
 
-#define ADS1X15_LIB_VERSION               "0.2.4"
+#define ADS1X15_LIB_VERSION               "0.2.5"
 
 // allow compile time default address
 // address in { 0x48, 0x49, 0x4A, 0x4B }, no test...
@@ -165,6 +165,8 @@ public:
   int16_t  readADC_Differential_0_3();
   int16_t  readADC_Differential_1_3();
   int16_t  readADC_Differential_2_3();
+  int16_t  readADC_Differential_0_2();  // not possible in async
+  int16_t  readADC_Differential_1_2();  // not possible in async
   void     requestADC_Differential_0_3();
   void     requestADC_Differential_1_3();
   void     requestADC_Differential_2_3();
@@ -193,6 +195,8 @@ public:
   int16_t  readADC_Differential_0_3();
   int16_t  readADC_Differential_1_3();
   int16_t  readADC_Differential_2_3();
+  int16_t  readADC_Differential_0_2();  // not possible in async
+  int16_t  readADC_Differential_1_2();  // not possible in async
   void     requestADC_Differential_0_3();
   void     requestADC_Differential_1_3();
   void     requestADC_Differential_2_3();
