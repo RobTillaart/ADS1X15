@@ -157,6 +157,8 @@ For reading the ADC in a differential way there are 4 calls possible.
 - **readADC_Differential_0_3()** ADS1x15 only
 - **readADC_Differential_1_3()** ADS1x15 only
 - **readADC_Differential_2_3()** ADS1x15 only
+- **readADC_Differential_0_2()** ADS1x15 only - in software (no async equivalent)
+- **readADC_Differential_1_2()** ADS1x15 only - in software (no async equivalent)
 
 The differential reading of the ADC can also be done with asynchronuous calls.
 - **requestADC_Differential_0_1()** starts conversion for differential reading
@@ -166,10 +168,7 @@ The differential reading of the ADC can also be done with asynchronuous calls.
 
 After one of these calls one need to call
 - **isBusy()**  Is the conversion ready?
-- **getLastValue()** Read the result of the conversion.
-
-Note: issue made for missing differential readings 0_2 and 1_2 to support
-these in software.
+- **getValue()** Read the result of the conversion.
 
 
 #### ReadADC continuous mode
@@ -177,7 +176,7 @@ these in software.
 To use the continuous mode one need three calls
 - **setMode(0)** 0 = CONTINUOUS, 1 = SINGLE (default)
 - **readADC()** or **requestADC()** to get the continuous mode started.
-- **getLastValue()** to return the last value read by the device.
+- **getValue()** to return the last value read by the device.
 Calling this over and over again can give the same value multiple times.
 
 By using **isBusy()** or **isReady()** one can wait until new data is available.

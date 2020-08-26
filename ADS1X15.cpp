@@ -1,7 +1,7 @@
 //
 //    FILE: ADS1X15.cpp
 //  AUTHOR: Rob Tillaart
-// VERSION: 0.2.4
+// VERSION: 0.2.5
 //    DATE: 2013-03-24
 // PUPROSE: Arduino library for ADS1015 and ADS1115
 //     URL: https://github.com/RobTillaart/ADS1X15
@@ -15,6 +15,7 @@
 // 0.2.2   2020-08-18 add begin(sda, scl) for ESP32
 // 0.2.3   2020-08-20 add comparator code + async mode
 // 0.2.4   2020-08-26 check readme.md  and minor fixes
+// 0.2.5   2020-08-26 add missing readADC_Differential_X_X()
 
 
 #include "ADS1X15.h"
@@ -165,8 +166,6 @@ bool ADS1X15::begin(uint8_t sda, uint8_t scl)
 }
 #endif
 
-// TODO address should become parameter of begin()
-//      that allows one to 'search' for it in setup().
 bool ADS1X15::begin()
 {
   Wire.begin();
@@ -227,7 +226,7 @@ float ADS1X15::toVoltage(int16_t val)
   volts *= val;
   if (_config & ADS_CONF_RES_16)
   {
-    volts /= 32767;  // val = 16 bits - sign bir = 15 bits mantissa
+    volts /= 32767;  // val = 16 bits - sign bit = 15 bits mantissa
   }
   else
   {
@@ -427,6 +426,18 @@ int16_t ADS1015::readADC_Differential_2_3()
   return _readADC(ADS1X15_MUX_DIFF_2_3);
 }
 
+int16_t ADS1015::readADC_Differential_0_2()
+{
+  return readADC(2) - readADC(0);
+}
+
+int16_t ADS1015::readADC_Differential_1_2()
+{
+  return readADC(2) - readADC(1);;
+}
+
+
+
 void ADS1015::requestADC_Differential_0_3()
 {
   _requestADC(ADS1X15_MUX_DIFF_0_3);
@@ -496,6 +507,16 @@ int16_t ADS1115::readADC_Differential_1_3()
 int16_t ADS1115::readADC_Differential_2_3()
 {
   return _readADC(ADS1X15_MUX_DIFF_2_3);
+}
+
+int16_t ADS1115::readADC_Differential_0_2()
+{
+  return readADC(2) - readADC(0);
+}
+
+int16_t ADS1115::readADC_Differential_1_2()
+{
+  return readADC(2) - readADC(1);;
 }
 
 void ADS1115::requestADC_Differential_0_3()
