@@ -40,7 +40,7 @@ void setup()
   // set the thresholds to Trigger RDY pin
   ADS.setComparatorThresholdLow(0x0000);
   ADS.setComparatorThresholdHigh(0x0200);
-  ADS.setComperatorQueConvert(0);             // enable RDY pin !!
+  ADS.setComparatorQueConvert(0);             // enable RDY pin !!
   ADS.setComparatorLatch(0);
 }
 

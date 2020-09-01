@@ -42,7 +42,7 @@ void setup()
   // note NON-LATCH gives only a short pulse
   ADS.setComparatorLatch(1);             // 0 = NON LATCH      1 = LATCH
 
-  ADS.setComperatorQueConvert(0);        // 0 = trigger alert after 1 conversion
+  ADS.setComparatorQueConvert(0);        // 0 = trigger alert after 1 conversion
 
   // set the thresholds as a number...
   // ADS.setComparatorThresholdLow(5000);   // change if needed

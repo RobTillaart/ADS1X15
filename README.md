@@ -226,7 +226,7 @@ even if actual value has been 'restored to normal' value.
 #### QueConvert
 
 Set the number of conversions before trigger activates.
-The **setComperatorQueConvert(uint8_t mode)** is used to set the number of
+The **setComparatorQueConvert(uint8_t mode)** is used to set the number of
 conversions that exceed the threshold before the **ALERT/RDY** pin is set **HIGH**.
 A value of 3 (or above) effectively disables the comparator. See table below.
 
