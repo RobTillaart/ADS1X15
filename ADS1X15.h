@@ -2,7 +2,7 @@
 //
 //    FILE: ADS1X15.H
 //  AUTHOR: Rob Tillaart
-// VERSION: 0.2.5
+// VERSION: 0.2.6
 //    DATE: 2013-03-24
 // PUPROSE: Arduino library for ADS1015 and ADS1115
 //     URL: https://github.com/RobTillaart/ADS1X15
@@ -11,7 +11,7 @@
 #include "Arduino.h"
 #include "Wire.h"
 
-#define ADS1X15_LIB_VERSION               "0.2.5"
+#define ADS1X15_LIB_VERSION               "0.2.6"
 
 // allow compile time default address
 // address in { 0x48, 0x49, 0x4A, 0x4B }, no test...
@@ -76,7 +76,7 @@ public:
   void     requestADC(uint8_t pin);
   void     requestADC_Differential_0_1();
   bool     isBusy();
-  bool     isReady() { return isBusy() == false); };
+  bool     isReady() { return isBusy() == false; };
 
 
   // COMPARATOR
@@ -99,8 +99,8 @@ public:
   // 1   = trigger alert after 2 conversions
   // 2   = trigegr alert after 4 conversions
   // 3   = Disable comparator =  default, also for all other values.
-  void     setComperatorQueConvert(uint8_t mode) { _compQueConvert = (mode < 3) ? mode : 3; };
-  uint8_t  getComperatorQueConvert()             { return _compQueConvert; };
+  void     setComparatorQueConvert(uint8_t mode) { _compQueConvert = (mode < 3) ? mode : 3; };
+  uint8_t  getComparatorQueConvert()             { return _compQueConvert; };
 
   void     setComparatorThresholdLow(int16_t lo);
   int16_t  getComparatorThresholdLow();

@@ -38,8 +38,8 @@ setComparatorPolarity	KEYWORD2
 getComparatorPolarity	KEYWORD2
 setComparatorLatch	KEYWORD2
 getComparatorLatch	KEYWORD2
-setComperatorQueConvert	KEYWORD2
-getComperatorQueConvert	KEYWORD2
+setComparatorQueConvert	KEYWORD2
+getComparatorQueConvert	KEYWORD2
 setComparatorThresholdLow	KEYWORD2
 getComparatorThresholdLow	KEYWORD2
 setComparatorThresholdHigh	KEYWORD2

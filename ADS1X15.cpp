@@ -1,7 +1,7 @@
 //
 //    FILE: ADS1X15.cpp
 //  AUTHOR: Rob Tillaart
-// VERSION: 0.2.5
+// VERSION: 0.2.6
 //    DATE: 2013-03-24
 // PUPROSE: Arduino library for ADS1015 and ADS1115
 //     URL: https://github.com/RobTillaart/ADS1X15
@@ -16,6 +16,7 @@
 // 0.2.3   2020-08-20 add comparator code + async mode
 // 0.2.4   2020-08-26 check readme.md  and minor fixes
 // 0.2.5   2020-08-26 add missing readADC_Differential_X_X()
+// 0.2.6   2020-09-01 fix #12 - fix getMaxVoltage + minor refactor
 
 
 #include "ADS1X15.h"
@@ -113,7 +114,9 @@ differs for different devices, check datasheet or readme.md
 #define ADS_CONF_CHAN_4  0x01
 #define ADS_CONF_RES_12  0x00
 #define ADS_CONF_RES_16  0x04
+#define ADS_CONF_NOGAIN  0x00
 #define ADS_CONF_GAIN    0x10
+#define ADS_CONF_NOCOMP  0x00
 #define ADS_CONF_COMP    0x20
 
 
@@ -239,12 +242,12 @@ float ADS1X15::getMaxVoltage()
 {
   switch (_gain)
   {
-    case 0:  return 6.144;
-    case 1:  return 4.096;
-    case 2:  return 2.048;
-    case 4:  return 1.024;
-    case 8:  return 0.512;
-    case 16: return 0.256;
+    case ADS1X15_PGA_6_144V: return 6.144;
+    case ADS1X15_PGA_4_096V: return 4.096;
+    case ADS1X15_PGA_2_048V: return 2.048;
+    case ADS1X15_PGA_1_024V: return 1.024;
+    case ADS1X15_PGA_0_512V: return 0.512;
+    case ADS1X15_PGA_0_256V: return 0.256;
   }
   return ADS1X15_INVALID_VOLTAGE;
 }
@@ -377,7 +380,7 @@ void ADS1X15::_requestADC(uint16_t readmode)
 ADS1013::ADS1013(uint8_t address)
 {
   _address = address;
-  _config = 0x00;
+  _config = ADS_CONF_NOCOMP | ADS_CONF_NOGAIN | ADS_CONF_RES_12 | ADS_CONF_CHAN_1;
   _conversionDelay = ADS1015_CONVERSION_DELAY;
   _bitShift = 4;
   _maxPorts = 1;
@@ -391,7 +394,7 @@ ADS1013::ADS1013(uint8_t address)
 ADS1014::ADS1014(uint8_t address)
 {
   _address = address;
-  _config = 0x30;
+  _config = ADS_CONF_COMP | ADS_CONF_GAIN | ADS_CONF_RES_12 | ADS_CONF_CHAN_1;
   _conversionDelay = ADS1015_CONVERSION_DELAY;
   _bitShift = 4;
   _maxPorts = 1;
@@ -405,7 +408,7 @@ ADS1014::ADS1014(uint8_t address)
 ADS1015::ADS1015(uint8_t address)
 {
   _address = address;
-  _config = 0x34;
+  _config = ADS_CONF_COMP | ADS_CONF_GAIN | ADS_CONF_RES_12 | ADS_CONF_CHAN_4;
   _conversionDelay = ADS1015_CONVERSION_DELAY;
   _bitShift = 4;
   _maxPorts = 4;
@@ -453,6 +456,7 @@ void ADS1015::requestADC_Differential_2_3()
   _requestADC(ADS1X15_MUX_DIFF_2_3);
 }
 
+
 ///////////////////////////////////////////////////////////////////////////
 //
 // ADS1113
@@ -460,7 +464,7 @@ void ADS1015::requestADC_Differential_2_3()
 ADS1113::ADS1113(uint8_t address)
 {
   _address = address;
-  _config = 0x01;
+  _config = ADS_CONF_NOCOMP | ADS_CONF_NOGAIN | ADS_CONF_RES_16 | ADS_CONF_CHAN_1;
   _conversionDelay = ADS1115_CONVERSION_DELAY;
   _bitShift = 0;
   _maxPorts = 1;
@@ -474,7 +478,7 @@ ADS1113::ADS1113(uint8_t address)
 ADS1114::ADS1114(uint8_t address)
 {
   _address = address;
-  _config = 0x31;
+  _config = ADS_CONF_COMP | ADS_CONF_GAIN | ADS_CONF_RES_16 | ADS_CONF_CHAN_1;
   _conversionDelay = ADS1115_CONVERSION_DELAY;
   _bitShift = 0;
   _maxPorts = 1;
@@ -488,7 +492,7 @@ ADS1114::ADS1114(uint8_t address)
 ADS1115::ADS1115(uint8_t address)
 {
   _address = address;
-  _config = 0x35;
+  _config = ADS_CONF_COMP | ADS_CONF_GAIN | ADS_CONF_RES_16 | ADS_CONF_CHAN_4;
   _conversionDelay = ADS1115_CONVERSION_DELAY;
   _bitShift = 0;
   _maxPorts = 4;
