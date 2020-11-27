@@ -1,7 +1,7 @@
 //
 //    FILE: ADS1X15.cpp
 //  AUTHOR: Rob Tillaart
-// VERSION: 0.2.6
+// VERSION: 0.2.7
 //    DATE: 2013-03-24
 // PUPROSE: Arduino library for ADS1015 and ADS1115
 //     URL: https://github.com/RobTillaart/ADS1X15
@@ -17,6 +17,7 @@
 // 0.2.4   2020-08-26 check readme.md  and minor fixes
 // 0.2.5   2020-08-26 add missing readADC_Differential_X_X()
 // 0.2.6   2020-09-01 fix #12 - fix getMaxVoltage + minor refactor
+// 0.2.7   2020-09-27 redo readRegister() + getValue() + getError()
 
 
 #include "ADS1X15.h"
@@ -124,13 +125,13 @@ differs for different devices, check datasheet or readme.md
 //
 // STATIC MEMBERS
 // 
-static void writeRegister(uint8_t address, uint8_t reg, uint16_t value)
+static bool writeRegister(uint8_t address, uint8_t reg, uint16_t value)
 {
   Wire.beginTransmission(address);
   Wire.write((uint8_t)reg);
   Wire.write((uint8_t)(value >> 8));
   Wire.write((uint8_t)(value & 0xFF));
-  Wire.endTransmission();
+  return (Wire.endTransmission() == 0);
 }
 
 static uint16_t readRegister(uint8_t address, uint8_t reg)
@@ -139,10 +140,14 @@ static uint16_t readRegister(uint8_t address, uint8_t reg)
   Wire.write(reg);
   Wire.endTransmission();
 
-  Wire.requestFrom(address, (uint8_t) 2);
-  uint16_t value = Wire.read() << 8;
-  value += Wire.read();
-  return value;
+  int rv = Wire.requestFrom(address, (uint8_t) 2);
+  if (rv == 2) 
+  {
+    uint16_t value = Wire.read() << 8;
+    value += Wire.read();
+    return value;
+  }
+  return 0x0000;
 }
 
 //////////////////////////////////////////////////////
@@ -164,7 +169,7 @@ ADS1X15::ADS1X15()
 bool ADS1X15::begin(uint8_t sda, uint8_t scl)
 {
   Wire.begin(sda, scl);
-  if (_address < 0x48 || _address > 0x4B) return false;
+  if ((_address < 0x48) || (_address > 0x4B)) return false;
   return true;
 }
 #endif
@@ -172,7 +177,7 @@ bool ADS1X15::begin(uint8_t sda, uint8_t scl)
 bool ADS1X15::begin()
 {
   Wire.begin();
-  if (_address < 0x48 || _address > 0x4B) return false;
+  if ((_address < 0x48) || (_address > 0x4B)) return false;
   return true;
 }
 
@@ -186,7 +191,7 @@ bool ADS1X15::isBusy()
 bool ADS1X15::isConnected()
 {
   Wire.beginTransmission(_address);
-  return Wire.endTransmission() == 0;
+  return (Wire.endTransmission() == 0);
 }
 
 void ADS1X15::setGain(uint8_t gain)
@@ -216,7 +221,8 @@ uint8_t ADS1X15::getGain()
     case ADS1X15_PGA_0_512V: return 8;
     case ADS1X15_PGA_0_256V: return 16;
   }
-  return ADS1X15_INVALID_GAIN;
+  _err = ADS1X15_INVALID_GAIN;
+  return _err;
 }
 
 float ADS1X15::toVoltage(int16_t val)
@@ -249,7 +255,8 @@ float ADS1X15::getMaxVoltage()
     case ADS1X15_PGA_0_512V: return 0.512;
     case ADS1X15_PGA_0_256V: return 0.256;
   }
-  return ADS1X15_INVALID_VOLTAGE;
+  _err = ADS1X15_INVALID_VOLTAGE;
+  return _err;
 }
 
 void ADS1X15::setMode(uint8_t mode)
@@ -269,7 +276,8 @@ uint8_t ADS1X15::getMode(void)
     case ADS1X15_MODE_CONTINUE: return 0;
     case ADS1X15_MODE_SINGLE:   return 1;
   }
-  return ADS1X15_INVALID_MODE;
+  _err = ADS1X15_INVALID_MODE;
+  return _err;
 }
 
 void ADS1X15::setDataRate(uint8_t dataRate)
@@ -335,6 +343,12 @@ int16_t ADS1X15::getComparatorThresholdHigh()
   return readRegister(_address, ADS1X15_REG_HIGH_THRESHOLD);
 };
 
+int8_t  ADS1X15::getError()
+{
+  int8_t rv = _err;
+  _err = ADS1X15_OK;
+  return rv;
+}
 
 //////////////////////////////////////////////////////
 //
@@ -351,7 +365,7 @@ int16_t ADS1X15::_readADC(uint16_t readmode)
   {
     delay(_conversionDelay);      // TODO needed in continuous mode?
   }
-  return getLastValue();
+  return getValue();
 }
 
 void ADS1X15::_requestADC(uint16_t readmode)

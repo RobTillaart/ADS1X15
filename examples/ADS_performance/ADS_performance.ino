@@ -1,7 +1,7 @@
 //
 //    FILE: ADS_performance.ino
 //  AUTHOR: Rob.Tillaart
-// VERSION: 0.1.0
+// VERSION: 0.1.1
 // PURPOSE: read analog input
 //
 
@@ -82,7 +82,7 @@ void test_continuous()
   x = ADS.readADC(0);
   for (int i = 0; i < 100; i++)
   {
-    x = ADS.getLastValue();
+    x = ADS.getValue();
   }
   d2 = micros() - start;
   Serial.print("\t\t");

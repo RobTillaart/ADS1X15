@@ -1,7 +1,7 @@
 //
 //    FILE: ADS_continuous.ino
 //  AUTHOR: Rob.Tillaart
-// VERSION: 0.1.0
+// VERSION: 0.1.1
 // PURPOSE: read analog input
 //
 
@@ -41,7 +41,7 @@ void setup()
 
 void loop()
 {
-  Serial.println(ADS.getLastValue());
+  Serial.println(ADS.getValue());
 }
 
 // -- END OF FILE --

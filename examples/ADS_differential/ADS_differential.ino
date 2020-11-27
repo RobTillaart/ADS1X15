@@ -53,10 +53,12 @@ void loop()
   float volts_23 = ADS.toVoltage(val_23); 
 
   Serial.print("\tval_01: "); Serial.print(val_01); Serial.print("\t"); Serial.println(volts_01, 3);
-//  Serial.print("\tval_03: "); Serial.print(val_03); Serial.print("\t"); Serial.println(volts_03, 3);
-//  Serial.print("\tval_13: "); Serial.print(val_13); Serial.print("\t"); Serial.println(volts_13, 3);
-//  Serial.print("\tval_23: "); Serial.print(val_23); Serial.print("\t"); Serial.println(volts_23, 3);
-//  Serial.println();
+  Serial.print("\tval_03: "); Serial.print(val_03); Serial.print("\t"); Serial.println(volts_03, 3);
+  Serial.print("\tval_13: "); Serial.print(val_13); Serial.print("\t"); Serial.println(volts_13, 3);
+  Serial.print("\tval_23: "); Serial.print(val_23); Serial.print("\t"); Serial.println(volts_23, 3);
+  Serial.println();
 
   delay(1000);
 }
+
+// -- END OF FILE --
