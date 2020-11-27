@@ -1,7 +1,7 @@
 //
 //    FILE: ADS_continuous_8_channel.ino
 //  AUTHOR: Rob.Tillaart
-// VERSION: 0.1.0
+// VERSION: 0.1.1
 // PURPOSE: read multiple analog inputs continuously
 //          interrupt driven to catch all conversions.
 //
@@ -87,7 +87,6 @@ void loop()
   delay(100);
 }
 
-
 // catch interrupt and set flag
 void adsReady_1()
 {
@@ -105,7 +104,7 @@ void handleConversion()
   if (RDY_1)
   {
     // save the last value
-    val[channel_1] = ADS_1.getLastValue();
+    val[channel_1] = ADS_1.getValue();
     // request next channel
     channel_1++;
     if (channel_1 >= 4) channel_1 = 0;
@@ -115,7 +114,7 @@ void handleConversion()
   if (RDY_2)
   {
     // save the last value
-    val[4 + channel_2] = ADS_2.getLastValue();
+    val[4 + channel_2] = ADS_2.getValue();
     // request next channel
     channel_2++;
     if (channel_2 >= 4) channel_2 = 0;

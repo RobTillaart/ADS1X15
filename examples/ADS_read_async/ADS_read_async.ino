@@ -1,7 +1,7 @@
 //
 //    FILE: ADS_read_async.ino
 //  AUTHOR: Rob.Tillaart
-// VERSION: 0.1.0
+// VERSION: 0.1.1
 // PURPOSE: read analog inputs - asynchronous
 //
 
@@ -36,7 +36,7 @@ void loop()
 {
   if (ADS.isBusy() == false)
   {
-    int16_t val_0 = ADS.getLastValue();
+    int16_t val_0 = ADS.getValue();
     ADS.requestADC(0);  // request a new one
     Serial.print("\tAnalog0: ");
     Serial.print(val_0);

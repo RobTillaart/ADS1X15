@@ -1,7 +1,7 @@
 //
 //    FILE: ADS_continuous_4_channel.ino
 //  AUTHOR: Rob.Tillaart
-// VERSION: 0.1.1
+// VERSION: 0.1.2
 // PURPOSE: read multiple analog inputs continuously
 //          interrupt driven to catch all conversions.
 //
@@ -82,8 +82,8 @@ void handleConversion()
 {
   if (RDY)
   {
-    // save the last value
-    val[channel] = ADS.getLastValue();
+    // save the value
+    val[channel] = ADS.getValue();
     // request next channel
     channel++;
     if (channel >= 4) channel = 0;

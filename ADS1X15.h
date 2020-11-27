@@ -2,7 +2,7 @@
 //
 //    FILE: ADS1X15.H
 //  AUTHOR: Rob Tillaart
-// VERSION: 0.2.6
+// VERSION: 0.2.7
 //    DATE: 2013-03-24
 // PUPROSE: Arduino library for ADS1015 and ADS1115
 //     URL: https://github.com/RobTillaart/ADS1X15
@@ -11,7 +11,7 @@
 #include "Arduino.h"
 #include "Wire.h"
 
-#define ADS1X15_LIB_VERSION               "0.2.6"
+#define ADS1X15_LIB_VERSION               "0.2.7"
 
 // allow compile time default address
 // address in { 0x48, 0x49, 0x4A, 0x4B }, no test...
@@ -24,6 +24,7 @@
 #endif
 
 
+#define ADS1X15_OK                  0
 #define ADS1X15_INVALID_VOLTAGE     -100
 #define ADS1X15_INVALID_GAIN        0xFF
 #define ADS1X15_INVALID_MODE        0xFE
@@ -71,7 +72,7 @@ public:
   int16_t  getValue();
 
   // ASYNC INTERFACE
-  // requestADC(pin) -> isBusy() or isReady() -> getLastValue(); 
+  // requestADC(pin) -> isBusy() or isReady() -> getValue(); 
   // see examples
   void     requestADC(uint8_t pin);
   void     requestADC_Differential_0_1();
@@ -107,6 +108,7 @@ public:
   void     setComparatorThresholdHigh(int16_t hi);
   int16_t  getComparatorThresholdHigh();
 
+  int8_t   getError();
 
 protected:
   ADS1X15();
@@ -140,6 +142,8 @@ protected:
 
   int16_t _readADC(uint16_t readmode);
   void    _requestADC(uint16_t readmode);
+
+  int8_t  _err = ADS1X15_OK;
 };
 
 ///////////////////////////////////////////////////////////////////////////
