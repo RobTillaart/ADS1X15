@@ -77,7 +77,7 @@ unittest(test_Voltage)
   assertEqual(6.144, volts);
 
   ADS.setGain(16);
-  float volts = ADS.getMaxVoltage();
+  volts = ADS.getMaxVoltage();
   assertEqual(0.256, volts);
 
 }
