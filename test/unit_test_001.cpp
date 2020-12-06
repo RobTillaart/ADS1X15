@@ -36,24 +36,17 @@ unittest_teardown()
 unittest(test_begin)
 {
   ADS1115 ADS(0x48);
-  bool b = ADS.begin();
-  assertTrue(b);
-
-  b = ADS.isConnected();
-  assertTrue(b);
-
-  b = ADS.isBusy();
-  assertFalse(b);
+  assertTrue(ADS.begin());
+  assertTrue(ADS.isConnected());
+  assertTrue(ADS.isBusy());
 }
 
 unittest(test_gain)
 {
   ADS1115 ADS(0x48);
-  bool b = ADS.begin();
-  assertTrue(b);
+  assertTrue(ADS.begin());
 
-  int gain = ADS.getGain();
-  assertEqual(0, gain);
+  assertEqual(0, ADS.getGain());
   int gains[6] = { 0,1,2,4,8,16 };
   for (int i = 0; i < 6; i++)
   {
@@ -62,8 +55,7 @@ unittest(test_gain)
   }
 
   ADS.setGain(42);
-  gain = ADS.getGain();
-  assertEqual(0, gain);
+  assertEqual(0, ADS.getGain());
 }
 
 unittest(test_Voltage)
@@ -74,12 +66,13 @@ unittest(test_Voltage)
   // should test all values?
   ADS.setGain(0);
   float volts = ADS.getMaxVoltage();
-  assertEqual(6.144, volts);
+  float delta = abs(6.144 - volts);
+  assertMoreOrEqual(0.001, delta);
 
   ADS.setGain(16);
   volts = ADS.getMaxVoltage();
-  assertEqual(0.256, volts);
-
+  delta = abs(0.256 - volts);
+  assertMoreOrEqual(0.001, delta);
 }
 
 
