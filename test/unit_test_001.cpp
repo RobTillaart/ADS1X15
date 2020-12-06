@@ -40,7 +40,7 @@ unittest(test_begin)
   assertTrue(b);
 
   b = ADS.isConnected();
-  assertFalse(b);
+  assertTrue(b);
 }
 
 unittest(test_gain)
@@ -59,7 +59,8 @@ unittest(test_gain)
   }
 
   ADS.setGain(42);
-  assertEqual(255, ADS.getGain());
+  gain = ADS.getGain();
+  assertEqual(255, gain);
 }
 
 
