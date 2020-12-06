@@ -1,3 +1,8 @@
+
+[![Arduino CI](https://github.com/RobTillaart/ADS1X15/workflows/Arduino%20CI/badge.svg)](https://github.com/marketplace/actions/arduino_ci)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/RobTillaart/ADS1X15/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/RobTillaart/ADS1X15.svg?maxAge=3600)](https://github.com/RobTillaart/ADS1X15/releases)
+
 # ADS1X15
 
 Arduino library for I2C ADC ADS1015, ADS1115,
