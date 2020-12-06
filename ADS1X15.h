@@ -46,8 +46,8 @@ public:
   // 4  =  ±1.024V
   // 8  =  ±0.512V
   // 16 =  ±0.256V
-  void     setGain(uint8_t gain = 0);
-  uint8_t  getGain();                    //  0xFF == invalid gain error.
+  void     setGain(uint8_t gain = 0);    // invalid values are mapped to 0 (safety).
+  uint8_t  getGain();                    // 0xFF == invalid gain error.
 
   // both may return ADS1X15_INVALID_VOLTAGE if the gain is invalid.
   float    toVoltage(int16_t val = 1);   //  converts raw to voltage

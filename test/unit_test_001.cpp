@@ -60,7 +60,7 @@ unittest(test_gain)
 
   ADS.setGain(42);
   gain = ADS.getGain();
-  assertEqual(255, gain);
+  assertEqual(0, gain);
 }
 
 
