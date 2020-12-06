@@ -41,6 +41,9 @@ unittest(test_begin)
 
   b = ADS.isConnected();
   assertTrue(b);
+
+  b = ADS.isBusy();
+  assertFalse(b);
 }
 
 unittest(test_gain)
@@ -61,6 +64,22 @@ unittest(test_gain)
   ADS.setGain(42);
   gain = ADS.getGain();
   assertEqual(0, gain);
+}
+
+unittest(test_Voltage)
+{
+  ADS1115 ADS(0x48);
+  assertTrue(ADS.begin());
+
+  // should test all values?
+  ADS.setGain(0);
+  float volts = ADS.getMaxVoltage();
+  assertEqual(6.144, volts);
+
+  ADS.setGain(16);
+  float volts = ADS.getMaxVoltage();
+  assertEqual(0.256, volts);
+
 }
 
 

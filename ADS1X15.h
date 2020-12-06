@@ -46,7 +46,7 @@ public:
   // 4  =  ±1.024V
   // 8  =  ±0.512V
   // 16 =  ±0.256V
-  void     setGain(uint8_t gain = 0);    // invalid values are mapped to 0 (safety).
+  void     setGain(uint8_t gain = 0);    // invalid values are mapped to 0 (default).
   uint8_t  getGain();                    // 0xFF == invalid gain error.
 
   // both may return ADS1X15_INVALID_VOLTAGE if the gain is invalid.
@@ -55,13 +55,13 @@ public:
 
   // 0  =  CONTINUOUS
   // 1  =  SINGLE      default
-  void     setMode(uint8_t mode = 1);
+  void     setMode(uint8_t mode = 1);    //  invalid values are mapped to 1 (default)
   uint8_t  getMode();                    //  0xFE == invalid mode error.
 
   // 0  =  slowest
   // 7  =  fastest
   // 4  =  default
-  void     setDataRate(uint8_t dataRate);
+  void     setDataRate(uint8_t dataRate);// invalid values are mapped on 4 (default)
   uint8_t  getDataRate();                // actual speed depends on device
 
   int16_t  readADC(uint8_t pin);
