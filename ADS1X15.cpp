@@ -362,13 +362,13 @@ int8_t ADS1X15::getError()
 }
 
 
-void ADS1X15::setClock(uint32_t clockSpeed)
+void ADS1X15::setWireClock(uint32_t clockSpeed)
 {
   _clockSpeed = clockSpeed;
   _wire->setClock(_clockSpeed);
 }
 
-uint32_t ADS1X15::getClock()
+uint32_t ADS1X15::getWireClock()
 {
   // TODO: get the real clock speed from the I2C interface if possible.
   // AVR ==> TWBR register.
