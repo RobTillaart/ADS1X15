@@ -63,8 +63,8 @@ public:
   // 0  =  slowest
   // 7  =  fastest
   // 4  =  default
-  void     setDataRate(uint8_t dataRate);// invalid values are mapped on 4 (default)
-  uint8_t  getDataRate();                // actual speed depends on device
+  void     setDataRate(uint8_t dataRate = 4); // invalid values are mapped on 4 (default)
+  uint8_t  getDataRate();                     // actual speed depends on device
 
   int16_t  readADC(uint8_t pin);
   int16_t  readADC_Differential_0_1();
@@ -72,6 +72,7 @@ public:
   // used by continuous mode and async mode.
   int16_t  getLastValue() { return getValue(); };  // will be obsolete in the future 0.4.0
   int16_t  getValue();
+
 
   // ASYNC INTERFACE
   // requestADC(pin) -> isBusy() or isReady() -> getValue(); 
@@ -110,10 +111,12 @@ public:
   void     setComparatorThresholdHigh(int16_t hi);
   int16_t  getComparatorThresholdHigh();
 
+
   int8_t   getError();
-  
-  void     setClock(uint32_t clockSpeed);
-  uint32_t getClock();
+
+  void     setWireClock(uint32_t clockSpeed);
+  // proto - getWireClock returns the value set by setWireClock not perse the actual value
+  uint32_t getWireClock();
 
 protected:
   ADS1X15();

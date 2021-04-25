@@ -290,7 +290,7 @@ void ADS1X15::setDataRate(uint8_t dataRate)
 
 uint8_t ADS1X15::getDataRate(void)
 {
-  return (_datarate >> 5);  // convert mask back to 0..7
+  return (_datarate >> 5) & 0x07;  // convert mask back to 0..7
 }
 
 
@@ -370,6 +370,9 @@ void ADS1X15::setClock(uint32_t clockSpeed)
 
 uint32_t ADS1X15::getClock()
 {
+  // TODO: get the real clock speed from the I2C interface if possible.
+  // AVR ==> TWBR register.
+  // ESP ==> ??
   return _clockSpeed;
 }
 
