@@ -368,12 +368,26 @@ void ADS1X15::setWireClock(uint32_t clockSpeed)
   _wire->setClock(_clockSpeed);
 }
 
+
+// TODO: get the real clock speed from the I2C interface if possible.
+// ESP ==> ??
 uint32_t ADS1X15::getWireClock()
 {
-  // TODO: get the real clock speed from the I2C interface if possible.
-  // AVR ==> TWBR register.
-  // ESP ==> ??
+#if defined(__AVR__)
+  uint32_t speed = F_CPU / ((TWBR * 2) + 16);
+  return speed;
+
+#elif defined(ESP32)
+  return (uint32_t) _wire->getClock();
+
+// #elif defined(ESP8266)
+// core_esp8266_si2c.cpp holds the data see => void Twi::setClock(
+// not supported.
+// return -1;
+
+#else  // best effort ...
   return _clockSpeed;
+#endif
 }
 
 
