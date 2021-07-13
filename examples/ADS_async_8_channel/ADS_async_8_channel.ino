@@ -1,7 +1,6 @@
 //
 //    FILE: ADS_async_8_channel.ino
 //  AUTHOR: Rob Tillaart
-// VERSION: 0.1.0
 // PURPOSE: demo reading two ADS1115 modules in parallel
 //    DATE: 2021-07-05
 //     URL: https://github.com/RobTillaart/ADS1X15
@@ -27,6 +26,7 @@ int16_t val1[4] = { 0, 0, 0, 0 };
 //int16_t val3[4] = { 0, 0, 0, 0 };
 int     idx = 0;
 
+uint32_t lastTime = 0;
 
 void setup()
 {
@@ -39,10 +39,17 @@ void setup()
   ADS1.begin();
   //  ADS2.begin();
   //  ADS3.begin();
+
   Serial.println(ADS0.isConnected());
   Serial.println(ADS1.isConnected());
   //  Serial.println(ADS2.isConnected());
   //  Serial.println(ADS3.isConnected());
+
+  ADS0.setDataRate(4);  // 7 is fastest, but more noise
+  ADS1.setDataRate(4);
+  //  ADS2.setDataRate(4);
+  //  ADS3.setDataRate(4);
+
   idx = 0;
   ADS_request_all();
 }
@@ -50,7 +57,6 @@ void setup()
 
 void loop()
 {
-  Serial.println(__FUNCTION__);
   // wait until all is read...
   while (ADS_read_all());
 
@@ -64,7 +70,6 @@ void loop()
 
 void ADS_request_all()
 {
-  // Serial.println(__FUNCTION__);
   if (ADS0.isConnected()) ADS0.requestADC(idx);
   if (ADS1.isConnected()) ADS1.requestADC(idx);
   //  if (ADS2.isConnected()) ADS2.requestADC(idx);
@@ -78,8 +83,7 @@ bool ADS_read_all()
   if (ADS1.isConnected() && ADS1.isBusy()) return true;
   //  if (ADS2.isConnected() && ADS2.isBusy()) return true;
   //  if (ADS3.isConnected() && ADS3.isBusy()) return true;
-  //Serial.print("IDX:\t");
-  //Serial.println(idx);
+
   if (ADS0.isConnected()) val0[idx] = ADS0.getValue();
   if (ADS1.isConnected()) val1[idx] = ADS1.getValue();
   //  if (ADS2.isConnected()) val2[idx] = ADS2.getValue();
@@ -97,9 +101,9 @@ bool ADS_read_all()
 
 void ADS_print_all()
 {
-  // Serial.println(__FUNCTION__);
-  // TIMESTAMP
-  Serial.println(millis());
+  uint32_t now = millis();
+  Serial.println(now - lastTime);
+  lastTime = now;
 
   // PRINT ALL VALUES OF ADC0
   for (int i = 0; i < 4; i++)

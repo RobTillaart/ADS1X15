@@ -33,9 +33,12 @@ void setup()
   {
     uint8_t address = 0x48 + i;
     ADS[i] = ADS1115(address);
+
     Serial.print(address, HEX);
     Serial.print("  ");
     Serial.println(ADS[i].begin() ? "connected" : "not connected");
+
+    ADS[i].setDataRate(4);  // 7 is fastest, but more noise
   }
   ADS_request_all();
 }
