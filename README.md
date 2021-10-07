@@ -29,11 +29,6 @@ interesting from functionality point of view as these can also do
 differential measurement.
 
 
-#### Note
-
-This readme file is work in progress.
-
-
 ## Interface
 
 The address of the ADS1113/4/5 is determined by to which pin the ADDR
@@ -110,6 +105,7 @@ Check the examples.
   ADS.setComparatorThresholdLow( 4.3 / f );
 ```
 
+
 #### Operational mode
 
 The ADS sensor can operate in single shot or continuous mode. 
@@ -154,8 +150,8 @@ If the pin number is out of range, this function will return 0.
 
 To read the ADC in an asynchronous way (e.g. to minimize blocking) one has to use three calls:
 - **void requestADC(uint8_t pin)**  Start the conversion. pin = 0..3. 
-- **bool isBusy()** Is the conversion not ready?
-- **bool isReady()** Is the conversion ready? (= wrapper around **isBusy()** )
+- **bool isBusy()** Is the conversion not ready yet? Works only in SINGLE mode!
+- **bool isReady()** Is the conversion ready? Works only in SINGLE mode!  (= wrapper around **isBusy()** )  
 - **int16_t getValue()** Read the result of the conversion.
 
 
@@ -165,6 +161,7 @@ in terms of code
   void setup()
   {
     // other setup things here
+    ADS.setMode(1);               // SINGLE SHOT MODE
     ADS.requestADC(pin);
   }
 
@@ -181,6 +178,7 @@ in terms of code
 
 ```
 See examples
+
 
 ## ReadADC Differential
 
@@ -199,8 +197,10 @@ The differential reading of the ADC can also be done with asynchronous calls.
 - **void requestADC_Differential_2_3()** ADS1x15 only
 
 After one of these calls one need to call
-- **bool isBusy()**  Is the conversion ready?
 - **int16_t getValue()** Read the result of the last conversion.
+
+The readiness of a CONTINUOUS conversion can only be detected by the RDY line.
+Use interrupt for this, see examples.
 
 
 #### ReadADC continuous mode
@@ -214,7 +214,10 @@ Note this can be a different pin, so be warned.
 Calling this over and over again can give the same value multiple times.
 
 By using **bool isBusy()** or **bool isReady()** one can wait until new data is available.
-Or one can use the **ALERT/RDY** pin to trigger via hardware the readiness of the conversion.
+NOte this only works in the SINGLE_SHOT modus.
+
+In continuous mode one should use the **ALERT/RDY** pin to trigger via hardware the readiness of the conversion.
+This can be done by using an interrupt.
 
 See examples.
 
@@ -248,7 +251,7 @@ high threshold register. The comparator then de-asserts when the input
 signal falls below the low threshold register value.
 
 - **void setComparatorMode(uint8_t mode)** value 0 = TRADITIONAL 1 = WINDOW, 
-- **uint8_t getComparatorMode()**
+- **uint8_t getComparatorMode()** returns value set.
   
   
 If the comparator **LATCH** is set, the **ALERT/RDY** pin asserts and it will be
