@@ -1,5 +1,7 @@
 
 [![Arduino CI](https://github.com/RobTillaart/ADS1X15/workflows/Arduino%20CI/badge.svg)](https://github.com/marketplace/actions/arduino_ci)
+[![Arduino-lint](https://github.com/RobTillaart/ADS1X15/actions/workflows/arduino-lint.yml/badge.svg)](https://github.com/RobTillaart/ADS1X15/actions/workflows/arduino-lint.yml)
+[![JSON check](https://github.com/RobTillaart/ADS1X15/actions/workflows/jsoncheck.yml/badge.svg)](https://github.com/RobTillaart/ADS1X15/actions/workflows/jsoncheck.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/RobTillaart/ADS1X15/blob/master/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/RobTillaart/ADS1X15.svg?maxAge=3600)](https://github.com/RobTillaart/ADS1X15/releases)
 
@@ -78,11 +80,11 @@ in the constructor.
 
 #### Programmable Gain
 
-- **void setGain(uint8_t  gain)** set the gain value, indicating the maxVoltage that can be measured
+- **void setGain(uint8_t gain)** set the gain value, indicating the maxVoltage that can be measured
 Adjusting the gain allows one to make more precise measurements. 
 Note: the gain is not set in the device until an explicit read/request of the ADC (any read call will do).
 See table below.
-- **uint8_t  getGain()** returns the gain value (index).
+- **uint8_t getGain()** returns the gain value (index).
 
 | PGA value | Max Voltage | Notes   |
 |:---------:|:-----------:|:-------:|
@@ -191,10 +193,10 @@ For reading the ADC in a differential way there are 4 calls possible.
 - **int16_t readADC_Differential_1_2()** ADS1x15 only - in software (no async equivalent)
 
 The differential reading of the ADC can also be done with asynchronous calls.
-- **int16_t requestADC_Differential_0_1()** starts conversion for differential reading
-- **int16_t requestADC_Differential_0_3()** ADS1x15 only
-- **int16_t requestADC_Differential_1_3()** ADS1x15 only
-- **int16_t requestADC_Differential_2_3()** ADS1x15 only
+- **void requestADC_Differential_0_1()** starts conversion for differential reading
+- **void requestADC_Differential_0_3()** ADS1x15 only
+- **void requestADC_Differential_1_3()** ADS1x15 only
+- **void requestADC_Differential_2_3()** ADS1x15 only
 
 After one of these calls one need to call
 - **bool isBusy()**  Is the conversion ready?
