@@ -81,7 +81,7 @@ public:
   void     requestADC(uint8_t pin);
   void     requestADC_Differential_0_1();
   bool     isBusy();
-  bool     isReady() { return isBusy() == false; };
+  bool     isReady();
 
 
   // COMPARATOR
