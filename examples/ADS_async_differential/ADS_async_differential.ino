@@ -1,5 +1,5 @@
 //
-//    FILE: ADS_continuous_differential.ino
+//    FILE: ADS_async_differential.ino
 //  AUTHOR: Rob.Tillaart
 // VERSION: 0.1.0
 // PURPOSE: read multiple differential continuously
@@ -43,8 +43,8 @@ void setup()
   ADS.setGain(0);        // 6.144 volt
   ADS.setDataRate(4);    // medium
 
-  // continuous mode
-  ADS.setMode(0);
+  // single shot mode
+  ADS.setMode(1);
   // start with first pair
   pair = 01;
   // trigger first read
