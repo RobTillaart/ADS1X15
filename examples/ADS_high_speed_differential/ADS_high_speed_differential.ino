@@ -71,6 +71,7 @@ void setup()
   ADS_2.readADC(channel);    // trigger first read
 }
 
+
 void loop()
 {
   if (handleConversion() == true)
@@ -82,8 +83,6 @@ void loop()
     }
     Serial.println();
   }
-
-
 }
 
 
@@ -122,3 +121,4 @@ bool handleConversion()
 
 
 // -- END OF FILE --
+
