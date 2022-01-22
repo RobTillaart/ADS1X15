@@ -29,26 +29,6 @@ As the 1015 and the 1115 are both 4 channels these are the most
 interesting from functionality point of view as these can also do
 differential measurement.
 
-
-## Installation
-
-### Using the Arduino IDE Library Manager
-
-1. Choose **Tools** -> **Manage Libraries...**
-2. Type **ADS1X15** into the search box.
-3. Search a row with title **ADS1X15** by Rob Tillaart.
-4. Click the **Install** button to install the library.
-
-### Using Git
-
-To using latest update of the library, you can clone this repository in Arduino library folder. Default library folder for windows is **C:\Users\{username}\Documents\Arduino** and for linux is **~/Documents/Arduino/libraries/**. 
-```sh
-git clone https://github.com/chandrawi/LoRaRF-Arduino.git
-```
-
-
-## Initializing
-
 The address of the ADS1113/4/5 is determined by to which pin the **ADDR**
 is connected to:
 
@@ -58,6 +38,12 @@ is connected to:
 |      VDD              |   0x49  |         |
 |      SDA              |   0x4A  |         |
 |      SCL              |   0x4B  |         |
+
+
+
+## Interface
+
+### Initializing
 
 To initialize the library you must call constructor as described below.
 
@@ -114,8 +100,6 @@ See - https://github.com/arduino/Arduino/issues/11457
 
 Question: should this functionality be in this library?
 
-
-## Configuration
 
 ### Programmable Gain
 
@@ -200,7 +184,8 @@ See [examples](https://github.com/RobTillaart/ADS1X15/blob/master/examples/ADS_m
 
 To read the ADC in an asynchronous way (e.g. to minimize blocking) you need call three functions:
 - **void requestADC(uint8_t pin)**  Start the conversion. pin = 0..3. 
-- **isBusy()** (Is the conversion not ready yet?) or **isReady()** (Is the conversion ready?) Works only in SINGLE mode! (= wrapper around **isBusy()** )  
+- **bool isBusy()** Is the conversion not ready yet? Works only in SINGLE mode!
+- **bool isReady()** Is the conversion ready? Works only in SINGLE mode!  (= wrapper around **isBusy()** )  
 - **int16_t getValue()** Read the result of the conversion.
 
 
@@ -278,19 +263,24 @@ void loop() {
 }
 ```
 
-See [examples](https://github.com/RobTillaart/ADS1X15/blob/master/examples/ADS_continuous/ADS_continuous.ino).
+See [examples](https://github.com/RobTillaart/ADS1X15/blob/master/examples/ADS_continuous/ADS_continuous.ino)
+.
+By using **bool isBusy()** or **bool isReady()** one can wait until new data is available.
+Note this only works in the SINGLE_SHOT modus.
 
 In continuous mode, you can't use **isBusy()** or **isReady()** functions to wait until new data available.
-Instead you can configure **ALERT/RDY** pin to trigger an interrupt signal when conversion data ready.
+Instead you can configure the threshold registers to allow the **ALERT/RDY** pin to trigger an interrupt signal when conversion data ready.
 
 
-### Configure RDY pin interrupt signal
+### Threshold registers
 
-Interrupt signals on the **ALERT/RDY** pin can be triggered every conversion data ready. 
-This is done by setting Hi_thresh register MSB to 1 and the Lo_thresh register MSB to 0.
+If the thresholdHigh is set to 0x0100 and the thresholdLow to 0x0000
+the **ALERT/RDY** pin is triggered when a conversion is ready.
 
-- **void setComparatorThresholdLow(0x8000)**
-- **void setComparatorThresholdHigh(0x7FFF)** 
+- **void setComparatorThresholdLow(int16_t lo)** writes value to device directly.
+- **void setComparatorThresholdHigh(int16_t hi)** writes value to device directly.
+- **int16_t getComparatorThresholdLow()** reads value from device.
+- **int16_t getComparatorThresholdHigh()** reads value from device.
 
 See [examples](https://github.com/RobTillaart/ADS1X15/blob/master/examples/ADS_read_RDY/ADS_read_RDY.ino).
 
