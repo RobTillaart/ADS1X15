@@ -27,10 +27,11 @@ void setup()
   Serial.print("ADS1X15_LIB_VERSION: ");
   Serial.println(ADS1X15_LIB_VERSION);
 
-  // SETUP FIRST ADS1115
+
+  // SETUP FIRST ADS1114
   ADS_1.begin();
-  ADS_1.setGain(0);         // 6.144 volt
-  ADS_1.setDataRate(7);
+  ADS_1.setGain(0);         //  0 == 6.144 volt, default
+  ADS_1.setDataRate(7);     //  7 == highest
 
   // SET ALERT RDY PIN
   ADS_1.setComparatorThresholdHigh(0x8000);
@@ -41,14 +42,14 @@ void setup()
   pinMode(2, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(2), adsReady_1, RISING);
 
-  ADS_1.setMode(0);         // continuous mode
-  ADS_1.readADC(0);         // trigger first read
+  ADS_1.setMode(0);         //  0 == continuous mode
+  ADS_1.readADC();          //  0 == default channel,  trigger first read
 
 
-  // SETUP SECOND ADS1115
+  // SETUP SECOND ADS1114
   ADS_2.begin();
-  ADS_2.setGain(0);         // 6.144 volt
-  ADS_2.setDataRate(7);
+  ADS_2.setGain(0);         //  0 == 6.144 volt, default
+  ADS_2.setDataRate(7);     //  7 == highest
 
   // SET ALERT RDY PIN
   ADS_2.setComparatorThresholdHigh(0x8000);
@@ -59,8 +60,8 @@ void setup()
   pinMode(3, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(3), adsReady_2, RISING);
 
-  ADS_2.setMode(0);         // continuous mode
-  ADS_2.readADC(0);         // trigger first read
+  ADS_2.setMode(0);         //  0 == continuous mode
+  ADS_2.readADC();          //  0 == default channel,  trigger first read
 }
 
 

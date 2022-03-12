@@ -36,7 +36,7 @@ void setup()
     Serial.print("  ");
     Serial.println(ADS[i].begin() ? "connected" : "not connected");
 
-    ADS[i].setDataRate(4);  // 7 is fastest, but more noise
+    ADS[i].setDataRate(4);        //  7 is fastest, but more noise
   }
   ADS_request_all();
 }
@@ -48,10 +48,10 @@ void loop()
   // wait until all is read...
   while(ADS_read_all());
 
-  // we have all values
+  // we have all values, so process (print) them
   ADS_print_all();
 
-  delay(1000);      // wait a second. <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  comment this line
+  delay(1000);      // wait a second, comment this line for more samples.
   ADS_request_all();
 }
 
@@ -69,12 +69,13 @@ void ADS_request_all()
 
 bool ADS_read_all()
 {
+  //  Serial.println(__FUNCTION__);
   for (int i = 0; i < 4; i++)
   {
     if (ADS[i].isConnected() && ADS[i].isBusy()) return true;
   }
-  // Serial.print("IDX:\t");
-  // Serial.println(idx);
+  //  Serial.print("IDX:\t");
+  //  Serial.println(idx);
   for (int i = 0; i < 4; i++)
   {
     if (ADS[i].isConnected())
@@ -89,14 +90,14 @@ bool ADS_read_all()
 
 void ADS_print_all()
 {
-  // Serial.println(__FUNCTION__);
-  // TIMESTAMP
+  //  Serial.println(__FUNCTION__);
+  //  print duration since last print.
   now = millis();
   Serial.print(now - last);
   last = now;
   Serial.println();
 
-  // PRINT ALL VALUES
+  //  PRINT ALL VALUES
   for (int i = 0; i < 4; i++)
   {
     Serial.print(val[i]);
