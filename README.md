@@ -369,6 +369,12 @@ mean something different see - Comparator Mode above or datasheet.
 - **int16_t getComparatorThresholdLow()** reads value from device.
 - **int16_t getComparatorThresholdHigh()** reads value from device.
 
+### RP2040 specific
+
+- **void selectWire()** selects Wire for communication with the ADC. It does no need to be called, but if it must be called before begin()!
+- **void selectWire1()** selects Wire1 for the communication with the ADC. It must be called before begin()!
+- **bool begin(int sda, int scl)** begin communication with the ADC. It has the parameter for selecting on which pins the communication should happen. Check RP2040 Pinout for compatible pins.
+
 
 ## Future ideas & improvements
 

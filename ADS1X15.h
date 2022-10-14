@@ -39,16 +39,28 @@ public:
 #if defined (ESP8266) || defined(ESP32)
   bool     begin(int sda, int scl);
 #endif
+
+#if defined (ARDUINO_ARCH_RP2040)
+  void    selectWire() {  _useWire1 = false; };
+  void    selectWire1() {  _useWire1 = true; };
+
+  bool    usesWire() { return !_useWire1; };
+  bool    usesWire1() { return _useWire1; };
+
+  bool    begin(int sda, int scl);
+
+#endif
+
   bool     begin();
   bool     isConnected();
 
   //       GAIN
-  // 0  =  ±6.144V  default
-  // 1  =  ±4.096V
-  // 2  =  ±2.048V
-  // 4  =  ±1.024V
-  // 8  =  ±0.512V
-  // 16 =  ±0.256V
+  // 0  =  ï¿½6.144V  default
+  // 1  =  ï¿½4.096V
+  // 2  =  ï¿½2.048V
+  // 4  =  ï¿½1.024V
+  // 8  =  ï¿½0.512V
+  // 16 =  ï¿½0.256V
   void     setGain(uint8_t gain = 0);    // invalid values are mapped to 0 (default).
   uint8_t  getGain();                    // 0xFF == invalid gain error.
 
@@ -142,6 +154,7 @@ protected:
   uint16_t _gain;
   uint16_t _mode;
   uint16_t _datarate;
+  bool     _useWire1;
 
   // COMPARATOR variables
   // TODO merge these into one COMPARATOR MASK?  (low priority)
