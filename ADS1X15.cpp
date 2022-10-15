@@ -152,9 +152,9 @@ bool ADS1X15::begin(int sda, int scl)
 
 #if defined (ARDUINO_ARCH_RP2040)
 
-bool ADS1X15::begin(int sda, int scl)
+bool ADS1X15::begin(int sda, int scl, int wireUsed)
 {
-  if(_useWire1){
+  if(wireUsed = 1){
     _wire = &Wire1;
   }else{
     _wire = &Wire;

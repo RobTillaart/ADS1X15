@@ -33,8 +33,7 @@ void setup()
   Serial.print("ADS1X15_LIB_VERSION: ");
   Serial.println(ADS1X15_LIB_VERSION);
 
-  ADS.selectWire1();   // choose to use Wire1
-  ADS.begin(26, 27);   // SDA (Pin 26), SCL(Pin 27)
+  ADS.begin(26, 27, 1);   // SDA (Pin 26), SCL(Pin 27)
   ADS.setGain(0);      // 6.144 volt
   ADS.setDataRate(7);  // fast
   ADS.setMode(0);      // continuous mode
