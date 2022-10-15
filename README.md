@@ -371,11 +371,7 @@ mean something different see - Comparator Mode above or datasheet.
 
 ### RP2040 specific
 
-- **void selectWire()** selects Wire for communication with the ADC. It does no need to be called, but if it must be called before begin()!
-- **void selectWire1()** selects Wire1 for the communication with the ADC. It must be called before begin()!
-- **bool usesWire()** returns true, if Wire is used for the ADC
-- **bool usesWire1()** returns true, if Wire1 is used for the ADC
-- **bool begin(int sda, int scl)** begin communication with the ADC. It has the parameter for selecting on which pins the communication should happen. Check RP2040 Pinout for compatible pins.
+- **bool begin(int sda, int scl, int wireUsed)** begin communication with the ADC. It has the parameter for selecting on which pins the communication should happen. wireUsed is optional. For Wire1 use the number 1. Check RP2040 Pinout for compatible pins.
 
 
 ## Future ideas & improvements
