@@ -371,7 +371,7 @@ mean something different see - Comparator Mode above or datasheet.
 
 ### RP2040 specific
 
-- **bool begin(int sda, int scl, int wireUsed)** begin communication with the ADC. It has the parameter for selecting on which pins the communication should happen. wireUsed is optional. For Wire1 use the number 1. Check RP2040 Pinout for compatible pins.
+- **bool begin(int sda, int scl)** begin communication with the ADC. It has the parameter for selecting on which pins the communication should happen. wireUsed is optional. Check RP2040 Pinout for compatible pins. If, "Wire1" is used, you need to add "&Wire1" in the constructor.
 
 
 ## Future ideas & improvements
