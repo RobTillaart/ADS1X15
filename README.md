@@ -369,6 +369,10 @@ mean something different see - Comparator Mode above or datasheet.
 - **int16_t getComparatorThresholdLow()** reads value from device.
 - **int16_t getComparatorThresholdHigh()** reads value from device.
 
+### RP2040 specific
+
+- **bool begin(int sda, int scl)** begin communication with the ADC. It has the parameter for selecting on which pins the communication should happen. wireUsed is optional. Check RP2040 Pinout for compatible pins. If, "Wire1" is used, you need to add "&Wire1" in the constructor.
+
 
 ## Future ideas & improvements
 
