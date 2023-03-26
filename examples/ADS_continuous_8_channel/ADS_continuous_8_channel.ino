@@ -1,10 +1,9 @@
 //
 //    FILE: ADS_continuous_8_channel.ino
 //  AUTHOR: Rob.Tillaart
-// VERSION: 0.1.1
 // PURPOSE: read multiple analog inputs continuously
 //          interrupt driven to catch all conversions.
-//
+//     URL: https://github.com/RobTillaart/ADS1X15
 
 // test
 // connect multiple potmeters to 2 ADS1115

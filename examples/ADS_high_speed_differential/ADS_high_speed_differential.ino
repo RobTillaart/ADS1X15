@@ -1,10 +1,9 @@
 //
 //    FILE: ADS_high_speed_differential.ino.ino
 //  AUTHOR: Rob.Tillaart
-// VERSION: 0.1.0
 // PURPOSE: read from 2 IC's for high speed differential
 //          interrupt driven to catch all conversions.
-//
+//     URL: https://github.com/RobTillaart/ADS1X15
 
 // test setup (not tested yet)
 // - connect 2 ADS1x15 to I2C bus

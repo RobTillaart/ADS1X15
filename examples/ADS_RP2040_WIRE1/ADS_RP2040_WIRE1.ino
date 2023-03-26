@@ -1,9 +1,8 @@
 //
 //    FILE: ADS_RP2040_WIRE1.ino
 //  AUTHOR: Rob.Tillaart / Intubun
-// VERSION: 0.1.1
 // PURPOSE: read analog input
-//
+//     URL: https://github.com/RobTillaart/ADS1X15
 
 // test
 // connect 1 potmeter

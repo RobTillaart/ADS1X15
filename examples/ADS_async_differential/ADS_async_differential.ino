@@ -3,7 +3,7 @@
 //  AUTHOR: Rob.Tillaart
 // VERSION: 0.1.0
 // PURPOSE: read multiple differential continuously
-//
+//     URL: https://github.com/RobTillaart/ADS1X15
 
 // test
 // connect 4 potmeters
