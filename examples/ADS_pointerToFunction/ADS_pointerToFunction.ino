@@ -4,6 +4,9 @@
 //     URL: https://github.com/RobTillaart/ADS1X15
 
 
+//  WARNING ONLY TESTED ON AVR
+
+
 #include "Arduino.h"
 #include "ADS1X15.h"
 
