@@ -52,9 +52,6 @@ void setup()
   Serial.print("ADS1X15_LIB_VERSION: ");
   Serial.println(ADS1X15_LIB_VERSION);
 
-  pinMode(2, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(2), adsReady, RISING);
-
   Wire.setClock(400000);
 
   ADS.begin();
