@@ -41,6 +41,7 @@ void setup()
 
   for (int dr = 0; dr < 8; dr++)
   {
+    //  0 = slow   4 = medium   7 = fast
     ADS.setDataRate(dr);
     Serial.print("DR:\t");
     Serial.println(dr);
@@ -95,5 +96,5 @@ void test_continuous()
 }
 
 
-// -- END OF FILE --
+//  -- END OF FILE --
 

@@ -34,7 +34,8 @@ void setup()
 
   ADS.begin();
   ADS.setGain(0);      // 6.144 volt
-  ADS.setDataRate(0);  // slow so the led blinks visible for the eye.
+  // select slow so the led blinks visible for the eye.
+  ADS.setDataRate(0);  // 0 = slow   4 = medium   7 = fast
   f = ADS.toVoltage(); // voltage factor
   ADS.requestADC(0);
   

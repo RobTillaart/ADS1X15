@@ -34,7 +34,7 @@ void setup()
 
   ADS.begin();
   ADS.setGain(0);      // 6.144 volt
-  ADS.setDataRate(7);  // fast
+  ADS.setDataRate(7);  // 0 = slow   4 = medium   7 = fast
   ADS.setMode(0);      // continuous mode
   ADS.readADC(0);      // first read to trigger
 }

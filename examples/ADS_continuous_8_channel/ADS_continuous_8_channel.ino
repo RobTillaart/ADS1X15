@@ -46,7 +46,7 @@ void setup()
   // SETUP FIRST ADS1115
   ADS_1.begin();
   ADS_1.setGain(0);        // 6.144 volt
-  ADS_1.setDataRate(7);
+  ADS_1.setDataRate(7);    // 0 = slow   4 = medium   7 = fast
 
   // SET ALERT RDY PIN
   ADS_1.setComparatorThresholdHigh(0x8000);
