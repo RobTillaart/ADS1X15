@@ -36,11 +36,9 @@ class ADS1X15
 public:
   void     reset();
 
-#if defined (ESP8266) || defined(ESP32) || (defined(ARDUINO_ARCH_RP2040) && !defined(__MBED__))
+#if defined (ESP8266) || defined(ESP32)
   bool     begin(int sda, int scl);
-#endif
-
-#if (defined (ARDUINO_ARCH_RP2040) && defined(__MBED__))
+#elif defined (ARDUINO_ARCH_RP2040) && !defined(__MBED__)
   bool    begin(int sda, int scl);
 #endif
 
