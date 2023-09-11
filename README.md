@@ -266,6 +266,29 @@ After one of these calls you need to call
 See [examples](https://github.com/RobTillaart/ADS1X15/blob/master/examples/ADS_differential/ADS_differential.ino).
 
 
+#### lastRequestMode
+
+Since 0.3.12 the library tracks the last request mode, single pin or differential.
+This variable is set at the moment of request, and keeps its value until a new 
+request is made. This implies that the value / request can be quite old.
+
+Values >= 0x10 are differential, values < 0x10 are single pin. 
+
+- **uint8_t lastRequest()**
+
+|  Value  |  Description                 |  Notes  |
+|:-------:|:-----------------------------|:--------|
+|  0xFF   |  no (invalid) request made   |  after call constructor.
+|  0x00   |  single pin 0                |
+|  0x01   |  single pin 1                |
+|  0x02   |  single pin 2                |
+|  0x03   |  single pin 3                |
+|  0x10   |  differential pin 1 0        |
+|  0x30   |  differential pin 3 0        |
+|  0x31   |  differential pin 3 1        |
+|  0x32   |  differential pin 3 2        |
+
+
 #### ReadADC continuous mode
 
 To use the continuous mode you need call three functions:
