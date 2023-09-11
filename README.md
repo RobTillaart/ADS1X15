@@ -274,7 +274,7 @@ request is made. This implies that the value / request can be quite old.
 
 Values >= 0x10 are differential, values < 0x10 are single pin. 
 
-- **uint8_t lastRequest()**
+- **uint8_t lastRequest()** returns one of the values below.
 
 |  Value  |  Description                 |  Notes  |
 |:-------:|:-----------------------------|:--------|
@@ -287,6 +287,15 @@ Values >= 0x10 are differential, values < 0x10 are single pin.
 |  0x30   |  differential pin 3 0        |
 |  0x31   |  differential pin 3 1        |
 |  0x32   |  differential pin 3 2        |
+
+
+Please note that (for now) the function does not support a descriptive return value
+for the following two requests:
+- **readADC_Differential_0_2()** ADS1x15 only - in software (no async equivalent)
+- **readADC_Differential_1_2()** ADS1x15 only - in software (no async equivalent)
+
+As these are emulated in software by two single pin calls, the state would be 
+one of the two single pin values.
 
 
 #### ReadADC continuous mode
@@ -453,7 +462,7 @@ If, "Wire1" is used, you need to add "&Wire1" in the constructor.
 
 #### Could
 
-- More examples ?
+- More examples
 - SMB alert command (00011001) on I2C bus?
 - sync order .h / .cpp
 
@@ -461,7 +470,7 @@ If, "Wire1" is used, you need to add "&Wire1" in the constructor.
 #### Wont (unless requested)
 
 - type flag?
-- constructor for ADS1X15?
+- constructor for ADS1X15? No as all types are supported.
 
 
 ## Support

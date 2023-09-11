@@ -136,7 +136,7 @@ void ADS1X15::reset()
   _compPol        = 1;
   _compLatch      = 0;
   _compQueConvert = 3;
-  _lastRequest    = 0xFFFF;
+  _lastRequest    = 0xFFFF;  //  no request yet
 }
 
 
@@ -345,7 +345,7 @@ uint8_t ADS1X15::lastRequest()
     case ADS1X15_READ_2:       return 0x02;
     case ADS1X15_READ_3:       return 0x03;
     //  technically 0x01 -- but would collide with READ_1
-    case ADS1X15_MUX_DIFF_0_1: return 0x10; 
+    case ADS1X15_MUX_DIFF_0_1: return 0x10;
     case ADS1X15_MUX_DIFF_0_3: return 0x30;
     case ADS1X15_MUX_DIFF_1_3: return 0x31;
     case ADS1X15_MUX_DIFF_2_3: return 0x32;
@@ -481,7 +481,8 @@ int16_t ADS1X15::_readADC(uint16_t readmode)
   }
   else
   {
-    delay(_conversionDelay);      //  TODO needed in continuous mode?
+    //  needed in continuous mode too, otherwise one get old value.
+    delay(_conversionDelay);
   }
   return getValue();
 }
@@ -503,7 +504,9 @@ void ADS1X15::_requestADC(uint16_t readmode)
   else            config |= ADS1X15_COMP_NON_LATCH;           //  bit 2      ALERT latching
   config |= _compQueConvert;                                  //  bit 0..1   ALERT mode
   _writeRegister(_address, ADS1X15_REG_CONFIG, config);
-  _lastRequest = readmode;  //  remember last request.
+
+  //  remember last request type.
+    _lastRequest = readmode;
 }
 
 
