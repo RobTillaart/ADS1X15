@@ -418,7 +418,10 @@ even if actual value has been 'restored to normal' value.
 Set the number of conversions before trigger activates.
 The **void setComparatorQueConvert(uint8_t mode)** is used to set the number of
 conversions that exceed the threshold before the **ALERT/RDY** pin is set **HIGH**.
-A value of 3 (or above) effectively disables the comparator. See table below.
+A value of 3 (or above) effectively disables the comparator. See table below. 
+To enable the conversion-ready function of the ALERT/RDY pin, it is necessary to set the MSB of the Hi_thresh register to 1 and the MSB of the Lo_thresh register to 0.
+
+See [examples](https://github.com/RobTillaart/ADS1X15/blob/master/examples/ADS_continuous_differential/ADS_continuous_differential.ino).
 
 - **void setComparatorQueConvert(uint8_t mode)** See table below.
 - **uint8_t getComparatorQueConvert()**  returns value set.
