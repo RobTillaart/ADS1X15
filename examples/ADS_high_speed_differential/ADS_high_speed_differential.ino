@@ -39,8 +39,10 @@ void setup()
   ADS_1.setGain(0);        // 6.144 volt
   ADS_1.setDataRate(7);    // 0 = slow   4 = medium   7 = fast
 
-  // SET ALERT RDY PIN
+  // SET ALERT RDY PIN (QueConvert mode)
+  // set the MSB of the Hi_thresh register to 1
   ADS_1.setComparatorThresholdHigh(0x8000);
+  // set the MSB of the Lo_thresh register to 0
   ADS_1.setComparatorThresholdLow(0x0000);
   ADS_1.setComparatorQueConvert(0);
 
@@ -58,7 +60,9 @@ void setup()
   ADS_2.setDataRate(7);
 
   // SET ALERT RDY PIN
+  // set the MSB of the Hi_thresh register to 1
   ADS_2.setComparatorThresholdHigh(0x8000);
+  // set the MSB of the Lo_thresh register to 0
   ADS_2.setComparatorThresholdLow(0x0000);
   ADS_2.setComparatorQueConvert(0);
 
