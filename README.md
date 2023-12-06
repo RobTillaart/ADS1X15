@@ -37,6 +37,15 @@ interesting from functionality point of view as these can also do
 differential measurements.
 
 
+#### 0.4.0 Breaking change
+
+Version 0.4.0 introduced a breaking change.
+You cannot set the pins in **begin()** any more.
+This reduces the dependency of processor dependent Wire implementations.
+The user has to call **Wire.begin()** and can optionally set the Wire pins 
+before calling **begin()**.
+
+
 #### Related
 
 - https://github.com/RobTillaart/MCP_ADC  (10 & 12 bit ADC, SPI, fast)
@@ -445,26 +454,13 @@ mean something different see - Comparator Mode above or datasheet.
 - **int16_t getComparatorThresholdHigh()** reads value from device.
 
 
-## RP2040 specific
-
-- **bool begin(int sda, int scl)** begin communication with the ADC.
-It has the parameter for selecting on which pins the communication should happen.
-Check RP2040 Pinout for compatible pins.
-If, "Wire1" is used, you need to add "&Wire1" in the constructor.
-
-
 ## Future ideas & improvements
 
 #### Must
 
 - Improve documentation (always)
 
-
 #### Should
-
-- investigate of remove the begin(sda, scl) versions 
-  as the responsibility for the Wire configuration 
-  should not be in this library. 
 
 
 #### Could
