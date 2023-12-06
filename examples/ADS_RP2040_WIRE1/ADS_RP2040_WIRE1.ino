@@ -33,7 +33,7 @@ void setup()
   Serial.println(ADS1X15_LIB_VERSION);
 
   //  SDA (Pin 26), SCL(Pin 27)
-  Wire1,begin();
+  Wire1.begin();
   Wire1.setSDA(26);
   Wire1.setSCL(27);
   
