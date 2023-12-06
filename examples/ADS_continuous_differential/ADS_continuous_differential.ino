@@ -57,8 +57,10 @@ void setup()
   ADS.setDataRate(0);    //  0 = slow   4 = medium   7 = fast  (7 = fails )
   //  every step is about a factor 2 slower.
 
-  //  SET ALERT RDY PIN
+  //  SET ALERT RDY PIN (QueConvert mode)
+  //  set the MSB of the Hi_thresh register to 1
   ADS.setComparatorThresholdHigh(0x8000);
+  //  set the MSB of the Lo_thresh register to 0
   ADS.setComparatorThresholdLow(0x0000);
   ADS.setComparatorQueConvert(0);
 
