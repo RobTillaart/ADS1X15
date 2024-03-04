@@ -88,7 +88,7 @@ unittest(test_gain_ADS1113)
 
   assertTrue(ADS.begin());
 
-  assertEqual(0, ADS.getGain());
+  assertEqual(2, ADS.getGain());
   int gains[6] = { 0,1,2,4,8,16 };
   for (int i = 0; i < 6; i++)
   {
