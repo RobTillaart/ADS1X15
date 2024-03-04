@@ -79,6 +79,30 @@ unittest(test_gain)
 }
 
 
+//  For issue #68, #2
+unittest(test_gain_ADS1113)
+{
+  ADS1113 ADS(0x48);
+
+  Wire.begin();
+
+  assertTrue(ADS.begin());
+
+  assertEqual(0, ADS.getGain());
+  int gains[6] = { 0,1,2,4,8,16 };
+  for (int i = 0; i < 6; i++)
+  {
+    ADS.setGain(gains[i]);
+    assertEqual(2, ADS.getGain());
+    assertEqualFloat(2.048, ADS.getMaxVoltage());
+  }
+
+  ADS.setGain(42);
+  assertEqual(2, ADS.getGain());
+  assertEqualFloat(2.048, ADS.getMaxVoltage());
+}
+
+
 unittest(test_Voltage)
 {
   ADS1115 ADS(0x48);

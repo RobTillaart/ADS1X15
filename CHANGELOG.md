@@ -7,8 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.4.2] - 2024-03-04
 - fix #68, gain bugs ADS1x13
+- add unit test for ADS1x13
 - update GitHub/actions to v4
 - removed depreciated **getLastValue()**
+- add multiplexer section to readme.md
 
 
 ## [0.4.1] - 2024-01-02

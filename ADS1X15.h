@@ -86,7 +86,7 @@ public:
   bool     isReady();
 
 
-  //  returns a pin 0x0[0..3] or 
+  //  returns a pin 0x0[0..3] or
   //          a differential "mode" 0x[pin second][pin first] or
   //          0xFF (no request / invalid request)
   uint8_t   lastRequest();
@@ -164,7 +164,7 @@ protected:
   uint8_t  _compLatch;
   uint8_t  _compQueConvert;
 
-  //  variable to track the last pin requested, 
+  //  variable to track the last pin requested,
   //  to allow for round robin query of
   //  pins based on this state == if no last request then == 0xFFFF.
   uint16_t  _lastRequest;
