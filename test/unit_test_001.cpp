@@ -94,12 +94,12 @@ unittest(test_gain_ADS1113)
   {
     ADS.setGain(gains[i]);
     assertEqual(2, ADS.getGain());
-    assertEqualFloat(2.048, ADS.getMaxVoltage());
+    assertEqualFloat(2.048, ADS.getMaxVoltage(), 0.001);
   }
 
   ADS.setGain(42);
   assertEqual(2, ADS.getGain());
-  assertEqualFloat(2.048, ADS.getMaxVoltage());
+  assertEqualFloat(2.048, ADS.getMaxVoltage(), 0.001);
 }
 
 
@@ -115,6 +115,26 @@ unittest(test_Voltage)
   ADS.setGain(0);
   float volts = ADS.getMaxVoltage();
   float delta = abs(6.144 - volts);
+  assertMoreOrEqual(0.001, delta);
+
+  ADS.setGain(1);
+  volts = ADS.getMaxVoltage();
+  delta = abs(4.096 - volts);
+  assertMoreOrEqual(0.001, delta);
+
+  ADS.setGain(2);
+  volts = ADS.getMaxVoltage();
+  delta = abs(2.048 - volts);
+  assertMoreOrEqual(0.001, delta);
+
+  ADS.setGain(4);
+  volts = ADS.getMaxVoltage();
+  delta = abs(1.024 - volts);
+  assertMoreOrEqual(0.001, delta);
+
+  ADS.setGain(8);
+  volts = ADS.getMaxVoltage();
+  delta = abs(0.512 - volts);
   assertMoreOrEqual(0.001, delta);
 
   ADS.setGain(16);
