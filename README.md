@@ -22,19 +22,37 @@ you can check similar library [here](https://github.com/chandrawi/ADS1x15-ADC).
 This library should work for the devices mentioned below,
 although not all sensors support all functionality.
 
-|  Device   |  Channels  |  Resolution  |  Max sps  |  Comparator  |  ProgGainAMP  |  Notes   |
-|:---------:|:----------:|:------------:|:---------:|:------------:|:-------------:|:---------|
-|  ADS1013  |      1     |       12     |    3300   |       N      |        N      |          |
-|  ADS1014  |      1     |       12     |    3300   |       Y      |        Y      |          |
-|  ADS1015  |      4     |       12     |    3300   |       Y      |        Y      |          |
-|  ADS1113  |      1     |       16     |    860    |       N      |        N      |          |
-|  ADS1114  |      1     |       16     |    860    |       Y      |        Y      |          |
-|  ADS1115  |      4     |       16     |    860    |       Y      |        Y      |  Tested  |
+|  Device   |  Channels  |  Resolution  |  Max sps  |  Comparator  |  Interrupts  |  ProgGainAMP  |  Notes   |
+|:---------:|:----------:|:------------:|:---------:|:------------:|:------------:|:-------------:|:---------|
+|  ADS1013  |      1     |       12     |    3300   |       N      |       N      |        N      |          |
+|  ADS1014  |      1     |       12     |    3300   |       Y      |       Y      |        Y      |          |
+|  ADS1015  |      4     |       12     |    3300   |       Y      |       Y      |        Y      |          |
+|  ADS1113  |      1     |       16     |    860    |       N      |       N      |        N      |          |
+|  ADS1114  |      1     |       16     |    860    |       Y      |       Y      |        Y      |          |
+|  ADS1115  |      4     |       16     |    860    |       Y      |       Y      |        Y      |  Tested  |
 
 
 As the ADS1015 and the ADS1115 are both 4 channels these are the most
 interesting from functionality point of view as these can also do
 differential measurements.
+
+
+#### Interrupts
+
+Besides polling the ADS1x14 and ADS1x15 support interrupts to maximize throughput 
+with minimal latency. For this these device has a ALERT/RDY pin. 
+This pin can be used for interrupts or polling, see examples below.
+
+|   example                         |  Interrupts  |  notes  |
+|:---------------------------------:|:------------:|:-------:|
+|  ADS_1114_two_continuous.ino      |      Y       |
+|  ADS_continuous_3_channel.ino     |      Y       |
+|  ADS_continuous_4_channel.ino     |      Y       |
+|  ADS_continuous_8_channel.ino     |      Y       |
+|  ADS_continuous_differential.ino  |      Y       |
+|  ADS_high_speed_differential.ino  |      Y       |
+|  ADS_read_async_rdy.ino           |   polling    |
+|  ADS_read_RDY.ino                 |   polling    |
 
 
 #### 0.4.0 Breaking change
@@ -177,7 +195,7 @@ Check the [examples](https://github.com/RobTillaart/ADS1X15/blob/master/examples
 ```cpp
   float f = ADS.toVoltage();
   ADS.setComparatorThresholdLow( 3.0 / f );
-  ADS.setComparatorThresholdLow( 4.3 / f );
+  ADS.setComparatorThresholdHigh( 4.3 / f );
 ```
 
 
@@ -381,7 +399,14 @@ This explicit stop takes extra time, however it should prevent "incorrect" readi
 
 #### Threshold registers
 
-If the thresholdHigh is set to 0x0100 and the thresholdLow to 0x0000
+(datasheet 9.3.8)  
+_Conversion Ready Pin (ADS1114 and ADS1115 Only)
+The ALERT/RDY pin can also be configured as a conversion ready pin. Set the most-significant bit of the
+Hi_thresh register to 1 and the most-significant bit of Lo_thresh register to 0 to enable the pin as a conversion
+ready pin._
+
+
+If the thresholdHigh is set to 0x8000 and the thresholdLow to 0x0000
 the **ALERT/RDY** pin is triggered when a conversion is ready.
 
 - **void setComparatorThresholdLow(int16_t lo)** writes value to device directly.
@@ -443,15 +468,15 @@ even if actual value has been 'restored to normal' value.
 #### QueConvert
 
 Set the number of conversions before trigger activates.
+
 The **void setComparatorQueConvert(uint8_t mode)** is used to set the number of
 conversions that exceed the threshold before the **ALERT/RDY** pin is set **HIGH**.
 A value of 3 (or above) effectively disables the comparator. See table below. 
-To enable the conversion-ready function of the ALERT/RDY pin, it is necessary to set the MSB of the Hi_thresh register to 1 and the MSB of the Lo_thresh register to 0.
 
 See [examples](https://github.com/RobTillaart/ADS1X15/blob/master/examples/ADS_continuous_differential/ADS_continuous_differential.ino).
 
 - **void setComparatorQueConvert(uint8_t mode)** See table below.
-- **uint8_t getComparatorQueConvert()**  returns value set.
+- **uint8_t getComparatorQueConvert()**  returns the value set.
 
 |  value  |  meaning                            |  Notes    |
 |:-------:|:------------------------------------|:----------|
@@ -459,6 +484,12 @@ See [examples](https://github.com/RobTillaart/ADS1X15/blob/master/examples/ADS_c
 |    1    |  trigger alert after 2 conversions  |           |
 |    2    |  trigger alert after 4 conversions  |           |
 |    3    |  Disable comparator                 |  default  |
+|  other  |  Disable comparator                 |           |
+
+To enable the conversion-ready function of the **ALERT/RDY** pin, 
+it is necessary to set the MSB of the Hi_threshold register to 1 (value 0x8000)
+and the MSB of the Lo_threshold register to 0.
+See section **Threshold registers** above.
 
 
 #### Threshold registers comparator mode
@@ -477,22 +508,24 @@ mean something different see - Comparator Mode above or datasheet.
 #### Must
 
 - Improve documentation (always)
+  - split off separate topics?
 
 #### Should
 
+- remove the experimental **getWireClock()** as this is not really a library function
+  but a responsibility of the I2C library.
 
 #### Could
 
+- some **void** functions could return **bool** to be more informative?
 - More examples
 - SMB alert command (00011001) on I2C bus?
 - sync order .h / .cpp
-
 
 #### Wont (unless requested)
 
 - type flag?
 - constructor for ADS1X15? No as all types are supported.
-
 
 ## Support
 
