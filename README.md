@@ -33,15 +33,15 @@ although not all sensors support all functionality.
 
 
 As the ADS1015 and the ADS1115 are both 4 channels these are the most
-interesting from functionality point of view as these can also do
+interesting from functionality point of view as these can do
 differential measurements.
 
 
 #### Interrupts
 
 Besides polling the ADS1x14 and ADS1x15 support interrupts to maximize throughput 
-with minimal latency. For this these device has a ALERT/RDY pin. 
-This pin can be used for interrupts or polling, see examples below.
+with minimal latency. For this these device has an ALERT/RDY pin. 
+This pin can be used both for interrupts or polling, see table of examples below.
 
 |   example                         |  Interrupts  |  notes  |
 |:---------------------------------:|:------------:|:-------:|
@@ -59,21 +59,25 @@ This pin can be used for interrupts or polling, see examples below.
 
 Version 0.4.0 introduced a breaking change.
 You cannot set the pins in **begin()** any more.
-This reduces the dependency of processor dependent Wire implementations.
-The user has to call **Wire.begin()** and can optionally set the Wire pins 
+This reduces the dependency of processor dependent Wire / I2C implementations.
+The user has to call **Wire.begin()** and can optionally set the I2C pins 
 before calling **begin()**.
 
 
 #### Related
 
-- https://github.com/RobTillaart/MCP_ADC  (10 & 12 bit ADC, SPI, fast)
-- https://github.com/RobTillaart/PCF8591  (8 bit ADC + 1 bit DAC)
+- https://github.com/RobTillaart/ADC081S 10-12 bit, single channel ADC
+- https://github.com/RobTillaart/ADC08XS 10-12 bit, 2 + 4 channel ADC
+- https://gammon.com.au/adc tutorial about ADC's (UNO specific)
+- https://github.com/RobTillaart/MCP_ADC 10-12 bit, 1,2,4,8 channel ADC
+- https://github.com/RobTillaart/ADS1x15
+- https://github.com/RobTillaart/PCF8591 8 bit single ADC (+ 1 bit DAC)
 
 
 ## I2C Address
 
-The address of the ADS1113/4/5 is determined by to which pin the **ADDR**
-is connected to:
+The I2C address of the ADS1113 /14 /15 is determined by to which pin 
+the **ADDR** is connected to:
 
 |  ADDR pin connected to  |  Address  |  Notes    |
 |:-----------------------:|:---------:|:---------:|
@@ -126,32 +130,39 @@ and optional the Wire interface as parameter.
 and optional the Wire interface as parameter.
 
 
-After construction the **ADS.begin()** need to be called. This will return false
-if an invalid address is used.
-The function **bool isConnected()** can be used to verify the reading of the ADS.
-The function **void reset()** is sets the parameters to their initial value as
+After construction the **ADS.begin()** must be called, typical in **setup()**.
+
+- **bool begin()** Returns false if an invalid address is used.
+- **bool isConnected()** is used to check if the device address is visible on I2C.
+- **void reset()** sets the internal parameters to their initial value as
 in the constructor.
 
 For example.
 
 ```cpp
-#include "ADS1X15.h"
+  #include "ADS1X15.h"
 
-// initialize ADS1115 on I2C bus 1 with default address 0x48
-ADS1115 ADS(0x48);
+  //  initialize ADS1115 on I2C bus 1 with default address 0x48
+  ADS1115 ADS(0x48);
 
-void begin() {
-  if (!ADS.isConnected()) {
-    // error ADS1115 not connected
+  void setup() 
+  {
+    if (!ADS.begin()) 
+    {
+      //  invalid address ADS1115 or 0x48 not found
+    }
+    if (!ADS.isConnected()) 
+    {
+      //  address 0x48 not found
+    }
   }
-}
 ```
 
 
 #### I2C clock speed
 
 The function **void setWireClock(uint32_t speed = 100000)** is used to set the clock speed
-in Hz of the used I2C interface. typical value is 100 KHz.
+in Hz of the used I2C interface. Typical value is 100 KHz.
 
 The function **uint32_t getWireClock()** is a prototype.
 It returns the value set by setWireClock().
@@ -203,6 +214,7 @@ Check the [examples](https://github.com/RobTillaart/ADS1X15/blob/master/examples
 
 The ADS sensor can operate in single shot or continuous mode.
 Depending on how often conversions needed you can tune the mode.
+
 - **void setMode(uint8_t mode)** 0 = CONTINUOUS, 1 = SINGLE (default)
 Note: the mode is not set in the device until an explicit read/request of the ADC (any read call will do).
 - **uint8_t getMode()** returns current mode 0 or 1, or ADS1X15_INVALID_MODE = 0xFE.
@@ -237,22 +249,24 @@ Data rate in samples per second, based on datasheet is described on table below.
 
 Reading the ADC is very straightforward, the **readADC()** function handles all in one call.
 Under the hood it uses the asynchronous calls.
+
 - **int16_t readADC(uint8_t pin = 0)** normal ADC functionality, pin = 0..3.
-If the pin number is out of range, this function will return 0.
-Default pin = 0 as this is convenient for 1 channel devices.
+If the pin number is out of range, this function will return 0 (seems safest).
+Default pin = 0 as this is convenient for the single channel devices.
 
 ```cpp
-// read ADC in pin 2
-ADS.readADC(2);
+  //  read ADC in pin 2
+  ADS.readADC(2);
 
-// read ADC in pin 0 - two ways
-ADS.readADC();
-ADS.readADC(0);
+  //  read ADC in pin 0 - two ways
+  ADS.readADC();
+  ADS.readADC(0);
 ```
 
 See [examples](https://github.com/RobTillaart/ADS1X15/blob/master/examples/ADS_minimum/ADS_minimum.ino).
 
 To read the ADC in an asynchronous way (e.g. to minimize blocking) you need call three functions:
+
 - **void requestADC(uint8_t pin = 0)**  Start the conversion. pin = 0..3.
 Default pin = 0 as this is convenient for 1 channel devices.
 - **bool isBusy()** Is the conversion not ready yet? Works only in SINGLE mode!
@@ -260,12 +274,13 @@ Default pin = 0 as this is convenient for 1 channel devices.
 - **int16_t getValue()** Read the result of the conversion.
 
 
-in terms of code
+in terms of code:
+
 ```cpp
   void setup()
   {
-    // other setup things here
-    ADS.setMode(1);               // SINGLE SHOT MODE
+    //  other setup things here
+    ADS.setMode(1);               //  SINGLE SHOT MODE
     ADS.requestADC(pin);
   }
 
@@ -274,9 +289,9 @@ in terms of code
     if (ADS.isReady())
     {
       value = ADS.getValue();
-      ADS.requestADC(pin);       // request new conversion
+      ADS.requestADC(pin);       //  request new conversion
     }
-    // do other things here
+    //  do other things here
   }
 ```
 See [examples](https://github.com/RobTillaart/ADS1X15/blob/master/examples/ADS_read_async/ADS_read_async.ino).
@@ -294,8 +309,8 @@ For reading the ADC in a differential way there are 4 calls possible.
 - **int16_t readADC_Differential_1_2()** ADS1x15 only - in software (no async equivalent)
 
 ```cpp
-// read differential ADC between pin 0 and 1
-ADS.readADC_Differential_0_1(0);
+  //  read differential ADC between pin 0 and 1
+  ADS.readADC_Differential_0_1(0);
 ```
 
 The differential reading of the ADC can also be done with asynchronous calls.
@@ -346,6 +361,7 @@ one of the two single pin values.
 #### ReadADC continuous mode
 
 To use the continuous mode you need call three functions:
+
 - **void setMode(0)** 0 = CONTINUOUS, 1 = SINGLE (default).
 Note: the mode is not set in the device until an explicit read/request of the ADC (any read call will do).
 - **int16_t readADC(uint8_t pin)** or **void requestADC(uint8_t pin)** to get the continuous mode started.
@@ -354,16 +370,18 @@ Note this can be a different pin, so be warned.
 Calling this over and over again can give the same value multiple times.
 
 ```cpp
-void setup() {
-  // configuration things here
-  ADS.setMode(ADS.MODE_CONTINUOUS);
-  ADS.requestADC(0);              // request on pin 0
-}
+  void setup() 
+  {
+    //  configuration things here
+    ADS.setMode(ADS.MODE_CONTINUOUS);
+    ADS.requestADC(0);              //  request on pin 0
+  }
 
-void loop() {
-  value = ADS.getValue()
-  sleep(1)
-}
+  void loop()
+  {
+    value = ADS.getValue()
+    sleep(1)
+  }
 ```
 
 See [examples](https://github.com/RobTillaart/ADS1X15/blob/master/examples/ADS_continuous/ADS_continuous.ino)
@@ -514,6 +532,7 @@ mean something different see - Comparator Mode above or datasheet.
 
 - remove the experimental **getWireClock()** as this is not really a library function
   but a responsibility of the I2C library.
+- investigate ADS1118 library which should be a similar SPI based ADC.
 
 #### Could
 
