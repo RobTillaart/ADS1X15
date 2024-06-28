@@ -467,11 +467,30 @@ In this mode the alert is held if the **LATCH** is set. This is similar as above
 
 #### Polarity
 
-Default state of the **ALERT/RDY** pin is **LOW**, can be to set **HIGH**.
+Default state of the **ALERT/RDY** pin is **LOW**, which can be to set **HIGH**.
 
 - **void setComparatorPolarity(uint8_t pol)**
 Flag is only explicitly set after a **readADC()** or a **requestADC()**
 - **uint8_t getComparatorPolarity()** returns value set.
+
+
+From tests it became clear that the behaviour of the **ALERT/RDY** pin is ambiguous.
+The meaning of HIGH LOW is different for **continuous** and **single** mode, see
+the table below. Also different is the timing of the pulse at the **ALERT/RDY** pin.
+This might need some further investigation / confirmation, see **ADS_COMP_POL.ino**.
+
+| TEST |  MODE            |  COMP_POL  |  ALERT/RDY PIN                |  Notes  |
+|:----:|:-----------------|:-----------|:------------------------------|:--------|
+|   1  |  0 = continuous  |  0 = LOW   |  LOW with 8 us HIGH pulse     |  micro second pulse as specified in datasheet
+|   2  |  0 = continuous  |  1 = HIGH  |  HIGH with 8 us LOW pulse     |  micro second pulse as specified in datasheet
+|   3  |  1 = single      |  0 = LOW   |  HIGH with an 8 ms LOW pulse  |  1000 x longer pulse
+|   4  |  1 = single      |  1 = HIGH  |  LOW with an 8 ms HIGH pulse  |  1000 x longer pulse
+
+See issue #76 for screenshots
+
+Observations:
+- polarity in single mode seems indeed inverted
+- length of the pulse in continuous mode and in single mode differs a factor 1000.
 
 
 #### Latch
@@ -481,6 +500,8 @@ even if actual value has been 'restored to normal' value.
 
 - **void setComparatorLatch(uint8_t latch)** 0 = NO LATCH, not 0 = LATCH
 - **uint8_t getComparatorLatch()** returns value set.
+
+The (no-)latch is not verified in detail yet.
 
 
 #### QueConvert
