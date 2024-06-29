@@ -509,21 +509,14 @@ Times are estimates from scope.
 
 #### Conclusions
 
-- conversion always generates a pulse.
-- length of the pulse in continuous mode and in single mode differs.
+- Conversion always generates a pulse.
+- The length of the pulse in continuous mode and in single mode differs.
   - In single shot mode the length of the pulse indicates the conversion time.
   - in continuous mode the pulse indicates the end of conversion.
-- polarity in single mode seems to have an inverted pulse, however the semantics 
-  are different.
-
-#### Summary
-
-So in summary the semantics of COMP_POL:
-
-- if COMP_POL = 0, a FALLING edge indicates conversion ready.
-- if COMP_POL = 1, a RISING edge indicates conversion ready. 
-
-This needs more investigation / confirmation, so feedback welcome!
+- The polarity in single mode seems to have an inverted pulse, however it is
+  not about the pulse, it is about the edge.
+- If COMP_POL = 0, a FALLING edge indicates conversion ready.
+- If COMP_POL = 1, a RISING edge indicates conversion ready. 
 
 
 ### Latch

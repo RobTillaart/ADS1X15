@@ -43,8 +43,8 @@
 #define ADS1x15_COMP_MODE_TRADITIONAL     0x00
 #define ADS1x15_COMP_MODE_WINDOW          0x01
 
-#define ADS1x15_COMP_POL_LOW              0x00
-#define ADS1x15_COMP_POL_HIGH             0x01
+#define ADS1x15_COMP_POL_FALLING_EDGE     0x00
+#define ADS1x15_COMP_POL_RISING_EDGE      0x01
 
 #define ADS1x15_COMP_POL_LATCH            0x00
 #define ADS1x15_COMP_POL_NOLATCH          0x01
