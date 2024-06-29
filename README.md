@@ -512,7 +512,7 @@ Times are estimates from scope.
 - Conversion always generates a pulse.
 - The length of the pulse in continuous mode and in single mode differs.
   - In single shot mode the length of the pulse indicates the conversion time.
-  - in continuous mode the pulse indicates the end of conversion.
+  - In continuous mode the pulse indicates the end of conversion.
 - The polarity in single mode seems to have an inverted pulse, however it is
   not about the pulse, it is about the edge.
 - If COMP_POL = 0, a FALLING edge indicates conversion ready.
@@ -577,21 +577,20 @@ mean something different see - Comparator Mode above or datasheet.
 
 #### Should
 
-- remove the experimental **getWireClock()** as this is not really a library function
+- Remove the experimental **getWireClock()** as this is not really a library function
   but a responsibility of the I2C library.
-- investigate ADS1118 library which should be a similar SPI based ADC.
+- Investigate ADS1118 library which should be a similar SPI based ADC.
 
 #### Could
 
-- some **void** functions could return **bool** to be more informative?
 - More examples
 - SMB alert command (00011001) on I2C bus?
-- sync order .h / .cpp
+- Sync code order .h / .cpp
 
 #### Wont (unless requested)
 
-- type flag?
-- constructor for ADS1X15? No as all types are supported.
+- Type flag?
+- Constructor for ADS1X15? No as all types are supported.
 
 ## Support
 
