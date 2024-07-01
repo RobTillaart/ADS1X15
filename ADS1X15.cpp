@@ -451,7 +451,12 @@ int16_t ADS1X15::_readADC(uint16_t readmode)
   _requestADC(readmode);
   if (_mode == ADS1X15_MODE_SINGLE)
   {
-    while ( isBusy() ) yield();   //  wait for conversion; yield for ESP.
+    unsigned long start = millis();
+    while (isBusy()) {
+      yield();   //  wait for conversion; yield for ESP.
+      if ((start + ADS1X15_READ_TIMEOUT_MS) < millis())
+        return ADS1X15_ERROR_TIMEOUT;
+    }
   }
   else
   {
@@ -737,4 +742,3 @@ void ADS1115::requestADC_Differential_2_3()
 
 
 //  -- END OF FILE --
-

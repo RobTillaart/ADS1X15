@@ -24,9 +24,13 @@
 #define ADS1115_ADDRESS                   0x48
 #endif
 
+#ifndef ADS1X15_READ_TIMEOUT_MS
+#define ADS1X15_READ_TIMEOUT_MS           200 //Longest acquisition time is 125ms (8SPS)
+#endif
 
 #define ADS1X15_OK                        0
 #define ADS1X15_INVALID_VOLTAGE           -100
+#define ADS1X15_ERROR_TIMEOUT             -101
 #define ADS1X15_INVALID_GAIN              0xFF
 #define ADS1X15_INVALID_MODE              0xFE
 
@@ -268,4 +272,3 @@ public:
 
 
 //  -- END OF FILE --
-
