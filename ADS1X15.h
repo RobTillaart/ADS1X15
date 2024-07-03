@@ -28,6 +28,7 @@
 #define ADS1X15_OK                        0
 #define ADS1X15_INVALID_VOLTAGE           -100
 #define ADS1X15_ERROR_TIMEOUT             -101
+#define ADS1X15_ERROR_I2C                 -102
 #define ADS1X15_INVALID_GAIN              0xFF
 #define ADS1X15_INVALID_MODE              0xFE
 
@@ -195,7 +196,7 @@ protected:
   void     _requestADC(uint16_t readmode);
   bool     _writeRegister(uint8_t address, uint8_t reg, uint16_t value);
   uint16_t _readRegister(uint8_t address, uint8_t reg);
-  int8_t   _err = ADS1X15_OK;
+  int8_t   _error = ADS1X15_OK;
 
   TwoWire*  _wire;
   uint32_t  _clockSpeed = 0;

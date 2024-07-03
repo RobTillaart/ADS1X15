@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.4.5] - 2024-07-03
 - Fix #78, prevent infinite loop. (Thanks to devmirek).
 - Fix #76 (again), update readme.md Comparator Polarity.
+- add ADS1X15_ERROR_I2C, communication error.
 - add minimal section in readme.md about error codes.
 - minor edits.
 

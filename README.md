@@ -597,7 +597,8 @@ This is read and reset by **getError()**
 |:-------:|:-------------------------:|:-------------:|
 |      0  |  ADS1X15_OK               | idem.
 |   -100  |  ADS1X15_INVALID_VOLTAGE  | getMaxVoltage()
-|   -101  |  ADS1X15_ERROR_TIMEOUT    | readADC() device failure.
+|   -101  |  ADS1X15_ERROR_TIMEOUT    | readADC() device did not respond in time.
+|   -102  |  ADS1X15_ERROR_I2C        | I2C communication failure.
 |   0xFF  |  ADS1X15_INVALID_GAIN     | getGain() 
 |   0xFE  |  ADS1X15_INVALID_MODE     | getMode()
 
@@ -614,13 +615,13 @@ This is read and reset by **getError()**
 - Remove the experimental **getWireClock()** as this is not really a library function
   but a responsibility of the I2C library.
 - Investigate ADS1118 library which should be a similar SPI based ADC.
+- improve error handling
+  - refactor values to be more logic.
 
 #### Could
 
-- More examples
 - SMB alert command (00011001) on I2C bus?
 - Sync code order .h / .cpp
-- more error handling?
 
 #### Wont (unless requested)
 
