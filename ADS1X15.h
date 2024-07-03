@@ -2,7 +2,7 @@
 //
 //    FILE: ADS1X15.h
 //  AUTHOR: Rob Tillaart
-// VERSION: 0.4.4
+// VERSION: 0.4.5
 //    DATE: 2013-03-24
 // PURPOSE: Arduino library for ADS1015 and ADS1115
 //     URL: https://github.com/RobTillaart/ADS1X15
@@ -12,7 +12,7 @@
 #include "Arduino.h"
 #include "Wire.h"
 
-#define ADS1X15_LIB_VERSION               (F("0.4.4"))
+#define ADS1X15_LIB_VERSION               (F("0.4.5"))
 
 //  allow compile time default address
 //  address in { 0x48, 0x49, 0x4A, 0x4B }, no test...
@@ -24,9 +24,6 @@
 #define ADS1115_ADDRESS                   0x48
 #endif
 
-#ifndef ADS1X15_READ_TIMEOUT_MS
-#define ADS1X15_READ_TIMEOUT_MS           200 //Longest acquisition time is 125ms (8SPS)
-#endif
 
 #define ADS1X15_OK                        0
 #define ADS1X15_INVALID_VOLTAGE           -100
@@ -272,3 +269,4 @@ public:
 
 
 //  -- END OF FILE --
+

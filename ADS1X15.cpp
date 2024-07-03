@@ -1,7 +1,7 @@
 //
 //    FILE: ADS1X15.cpp
 //  AUTHOR: Rob Tillaart
-// VERSION: 0.4.4
+// VERSION: 0.4.5
 //    DATE: 2013-03-24
 // PURPOSE: Arduino library for ADS1015 and ADS1115
 //     URL: https://github.com/RobTillaart/ADS1X15
@@ -451,11 +451,17 @@ int16_t ADS1X15::_readADC(uint16_t readmode)
   _requestADC(readmode);
   if (_mode == ADS1X15_MODE_SINGLE)
   {
-    unsigned long start = millis();
-    while (isBusy()) {
+    uint32_t start = millis();
+    //  timeout == { 129, 65, 33, 17, 9, 5, 3, 2 }
+    //  a few ms more than max conversion time.
+    uint8_t timeOut = (128 >> (_datarate >> 5)) + 1;
+    while (isBusy()) 
+    {
       yield();   //  wait for conversion; yield for ESP.
-      if ((start + ADS1X15_READ_TIMEOUT_MS) < millis())
+      if ( (millis() - start) > timeOut) 
+      {
         return ADS1X15_ERROR_TIMEOUT;
+      }
     }
   }
   else
@@ -742,3 +748,4 @@ void ADS1115::requestADC_Differential_2_3()
 
 
 //  -- END OF FILE --
+
