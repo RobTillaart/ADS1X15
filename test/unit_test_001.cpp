@@ -180,7 +180,7 @@ unittest(test_datarate)
   for (int i = 0; i < 8; i++)
   {
     ADS.setDataRate(i);
-    assertEqual(1, ADS.getDataRate());
+    assertEqual(i, ADS.getDataRate());
   }
   //  test out of range
   ADS.setDataRate(8);
@@ -261,7 +261,7 @@ unittest(test_comparator_que_convert)
   for (int i = 0; i < 4; i++)
   {
     ADS.setComparatorQueConvert(i);
-    assertEqual(1, ADS.getComparatorQueConvert());
+    assertEqual(i, ADS.getComparatorQueConvert());
   }
   //  test out of range
   ADS.setComparatorQueConvert(4);
