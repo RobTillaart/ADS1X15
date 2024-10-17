@@ -271,6 +271,16 @@ Default pin = 0 as this is convenient for the single channel devices.
 
 See [examples](https://github.com/RobTillaart/ADS1X15/blob/master/examples/ADS_minimum/ADS_minimum.ino).
 
+
+The **readADC()** can return **ADS1X15_ERROR_TIMEOUT (-101)** which is an errorcode.
+This may conflict with a possible actual value of -101. 
+Therefore the user should check with **getError()** if an error has occurred after reading the ADC.
+
+This need to be fixed in the future, see issue #84.
+
+
+### Read the ADC in asynchronous way
+
 To read the ADC in an asynchronous way (e.g. to minimize blocking) you need call three functions:
 
 - **void requestADC(uint8_t pin = 0)**  Start the conversion. pin = 0..3.

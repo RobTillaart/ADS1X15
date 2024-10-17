@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.5.1] - 2024-10-17
 - fix #82, minimal timeout 10 ms for RTOS
 - set error flag for TIMEOUT
+- add error codes to keywords.txt
 
 ## [0.5.0] - 2024-08-20
 - Fix #80, setComparatorPolarity() and setComparatorLatch() inverting.

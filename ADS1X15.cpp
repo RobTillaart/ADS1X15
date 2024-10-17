@@ -230,7 +230,7 @@ void ADS1X15::setMode(uint8_t mode)
   switch (mode)
   {
     case 0: _mode = ADS1X15_MODE_CONTINUE; break;
-    default:
+    default:  //  catch invalid modi
     case 1: _mode = ADS1X15_MODE_SINGLE;   break;
   }
 }
@@ -449,13 +449,16 @@ uint32_t ADS1X15::getWireClock()
 //
 int16_t ADS1X15::_readADC(uint16_t readmode)
 {
+  //  note readmode includes the channel
   _requestADC(readmode);
+
   if (_mode == ADS1X15_MODE_SINGLE)
   {
     uint32_t start = millis();
-    //  timeout == { 129, 65, 33, 17, 9, 5, 3, 2 }
-    //  add 10 ms more than max conversion time.
-    //  to prevent premature timeout in RTOS context. See #82
+    //  timeout == { 138, 74, 42, 26, 18, 14, 12, 11 }
+    //  added 10 ms more than maximum conversion time from datasheet.
+    //  to prevent premature timeout in RTOS context.
+    //  See #82
     uint8_t timeOut = (128 >> (_datarate >> 5)) + 10;
     while (isBusy())
     {
