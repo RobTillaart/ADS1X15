@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [0.5.1] - 2024-10-17
+- fix #82, minimal timeout 10 ms for RTOS
+
 ## [0.5.0] - 2024-08-20
 - Fix #80, setComparatorPolarity() and setComparatorLatch() inverting.
 - add test example to test parameters.
