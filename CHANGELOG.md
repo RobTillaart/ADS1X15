@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 ## [0.5.1] - 2024-10-17
-- fix #82, minimal timeout 10 ms for RTOS
+- fix #82, minimal timeout 10 ms for RTOS, kudos to deKees687 
 - set error flag for TIMEOUT
 - add error codes to keywords.txt
 
