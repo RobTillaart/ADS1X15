@@ -461,6 +461,7 @@ int16_t ADS1X15::_readADC(uint16_t readmode)
     {
       if ( (millis() - start) > timeOut)
       {
+        _error = ADS1X15_ERROR_TIMEOUT;
         return ADS1X15_ERROR_TIMEOUT;
       }
       yield();   //  wait for conversion; yield for ESP.
