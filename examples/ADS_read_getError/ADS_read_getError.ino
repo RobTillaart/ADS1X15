@@ -17,8 +17,11 @@
 
 ADS1115 ADS(0x48);
 
+int16_t value[4];
+int err = ADS1X15_OK;
+float voltageFactor = 1;
 
-void setup() 
+void setup()
 {
   Serial.begin(115200);
   Serial.println();
@@ -29,49 +32,37 @@ void setup()
 
   Wire.begin();
   ADS.begin();
+
+  voltageFactor = ADS.toVoltage(1);
 }
 
 
-void loop() 
+void loop()
 {
   ADS.setGain(0);
 
-  int16_t val_0 = ADS.readADC(0);
-  int err = ADS.getError();
-  if (err != ADS1X15_OK)
-  {
-    Serial.print("input 0 => ");
-    Serial.println(err);
-  }
-  int16_t val_1 = ADS.readADC(1);  
-  err = ADS.getError();
-  if (err != ADS1X15_OK)
-  {
-    Serial.print("input 1 => ");
-    Serial.println(err);
-  }
-  int16_t val_2 = ADS.readADC(2);  
-  err = ADS.getError();
-  if (err != ADS1X15_OK)
-  {
-    Serial.print("input 2 => ");
-    Serial.println(err);
-  }
-  int16_t val_3 = ADS.readADC(3);  
-  err = ADS.getError();
-  if (err != ADS1X15_OK)
-  {
-    Serial.print("input 3 => ");
-    Serial.println(err);
-  }
-
   float f = ADS.toVoltage(1);  //  voltage factor
 
-  Serial.print("\tAnalog0: "); Serial.print(val_0); Serial.print('\t'); Serial.println(val_0 * f, 3);
-  Serial.print("\tAnalog1: "); Serial.print(val_1); Serial.print('\t'); Serial.println(val_1 * f, 3);
-  Serial.print("\tAnalog2: "); Serial.print(val_2); Serial.print('\t'); Serial.println(val_2 * f, 3);
-  Serial.print("\tAnalog3: "); Serial.print(val_3); Serial.print('\t'); Serial.println(val_3 * f, 3);
-  Serial.println();
+  for (int channel = 0; channel < 4; channel++)
+  {
+    value[channel] = ADS.readADC(channel);
+    err = ADS.getError();
+    if (err != ADS1X15_OK)
+    {
+      Serial.print(channel);
+      Serial.print(" returns error: ");
+      Serial.println(err);
+    }
+
+    Serial.print("\tChannel ");
+    Serial.print(channel);
+    Serial.print(": ");
+    Serial.print(value[channel]);
+    Serial.print('\t');
+    Serial.println(value[channel] * voltageFactor, 3);
+  }
+
+  //  optional do other things with value[channel]
 
   delay(1000);
 }
