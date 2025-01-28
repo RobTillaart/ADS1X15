@@ -85,6 +85,7 @@ before calling **begin()**.
 
 ### Related
 
+- https://github.com/RobTillaart/AD7367 2 channel simultaneous 14 bit ADC.
 - https://github.com/RobTillaart/ADC081S 10-12 bit, single channel ADC
 - https://github.com/RobTillaart/ADC08XS 10-12 bit, 2 + 4 channel ADC
 - https://gammon.com.au/adc tutorial about ADC's (UNO specific)
