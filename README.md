@@ -299,7 +299,7 @@ Therefore the user should check with **getError()** if an error has occurred aft
       //  handle error
 ```
 
-The errorhandling within the library need to be improved, see also issue #84.
+The error handling within the library need to be improved, see also issue #84.
 
 
 ### Read the ADC in asynchronous way
@@ -526,15 +526,17 @@ as that is the only single change visible. This is IMHO the correct view.
 
 #### ALERT RDY table
 
-|  MODE          |  COMP_POL  |  IDLE  |  START    |  CONVERT  |   READY   |
-|:---------------|:-----------|:-------|:----------|:----------|:----------|
-| 0 = continuous |  0 = LOW   |  HIGH  |  FALLING  |  LOW      |  RISING   |
-| 0 = continuous |  1 = HIGH  |  LOW   |  RISING   |  HIGH     |  FALLING  |
-| 1 = single     |  0 = LOW   |  HIGH  |  FALLING  |  LOW      |  RISING   |
-| 1 = single     |  1 = HIGH  |  LOW   |  RISING   |  HIGH     |  FALLING  |
+|  MODE          |  COMP_POL  |  CONVERT  |  COMPLETING  |   READY   |
+|:---------------|:-----------|:----------|:-------------|:----------|
+| 0 = continuous |  0 = LOW   |  LOW      |   RISING     |  FALLING  |
+| 0 = continuous |  1 = HIGH  |  HIGH     |   FALLING    |  RISING   |
+| 1 = single     |  0 = LOW   |  LOW      |   RISING     |  FALLING  |
+| 1 = single     |  1 = HIGH  |  HIGH     |   FALLING    |  RISING   |
 
 
-See issue #76 for some screenshots.
+See issue #76 and #87 for some screenshots.
+
+See also [Rev. D data sheet, Page 17 Figure 7-8 Conversion Ready Pulse in Continuous-Conversion Mode](https://www.ti.com/lit/ds/symlink/ads1115.pdf)
 
 
 #### Converting time by Data Rate
@@ -562,18 +564,18 @@ Times are estimates from scope.
 In short:
 
 - if COMP_POL = 0, 
-  - a FALLING edge indicates conversion start.
   - a LOW level indicates converting.
-  - a RISING edge indicates conversion ready.
-  - a HIGH level indicates idle.
- 
-- if COMP_POL = 1, 
-  - a RISING edge indicates conversion start.
-  - a HIGH level indicates converting.
+  - a RISING edge indicates conversion completing.
   - a FALLING edge indicates conversion ready.
-  - a LOW level indicates idle.
 
-This interpretation is in line with all tests done in #76.
+- if COMP_POL = 1, 
+  - a HIGH level indicates converting.
+  - a FALLING edge indicates conversion completing.
+  - a RISING edge indicates conversion ready.
+
+This interpretation is in line with all tests done in #76 and #87.
+
+See also [Rev. D data sheet, Page 17 Figure 7-8 Conversion Ready Pulse in Continuous-Conversion Mode](https://www.ti.com/lit/ds/symlink/ads1115.pdf)
 
 
 ### Latch
