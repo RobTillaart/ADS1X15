@@ -2,7 +2,7 @@
 //
 //    FILE: ADS1X15.h
 //  AUTHOR: Rob Tillaart
-// VERSION: 0.5.2
+// VERSION: 0.5.3
 //    DATE: 2013-03-24
 // PURPOSE: Arduino library for ADS1015 and ADS1115
 //     URL: https://github.com/RobTillaart/ADS1X15
@@ -12,7 +12,7 @@
 #include "Arduino.h"
 #include "Wire.h"
 
-#define ADS1X15_LIB_VERSION               (F("0.5.2"))
+#define ADS1X15_LIB_VERSION               (F("0.5.3"))
 
 //  allow compile time default address
 //  address in { 0x48, 0x49, 0x4A, 0x4B }, no test...
@@ -25,6 +25,7 @@
 #endif
 
 
+//  ERROR CONSTANTS
 #define ADS1X15_OK                        0
 #define ADS1X15_INVALID_VOLTAGE           -100
 #define ADS1X15_ERROR_TIMEOUT             -101
@@ -33,8 +34,23 @@
 #define ADS1X15_INVALID_MODE              0xFE
 
 
-//  PARAMETER CONSTANTS NOT USED IN CODE YET
-//  enum ?
+//  PARAMETER CONSTANTS (not used in the code)
+
+//  PARAMETER setMode()
+#define ADS1X15_MODE_CONTINUOUS           0x00
+#define ADS1X15_MODE_SINGLE               0x01
+
+//  PARAMETER setDataRate()
+#define ADS1X15_DATARATE_0                0x00
+#define ADS1X15_DATARATE_1                0x01
+#define ADS1X15_DATARATE_2                0x02
+#define ADS1X15_DATARATE_3                0x03
+#define ADS1X15_DATARATE_4                0x04
+#define ADS1X15_DATARATE_5                0x05
+#define ADS1X15_DATARATE_6                0x06
+#define ADS1X15_DATARATE_7                0x07
+
+//  PARAMETER setGain()
 #define ADS1X15_GAIN_6144MV               0x00
 #define ADS1X15_GAIN_4096MV               0x01
 #define ADS1X15_GAIN_2048MV               0x02
@@ -42,15 +58,17 @@
 #define ADS1X15_GAIN_0512MV               0x08
 #define ADS1X15_GAIN_0256MV               0x10
 
+//  PARAMETER setComparatorMode()
 #define ADS1x15_COMP_MODE_TRADITIONAL     0x00
 #define ADS1x15_COMP_MODE_WINDOW          0x01
 
+//  PARAMETER setComparatorPolarity()
 #define ADS1x15_COMP_POL_FALLING_EDGE     0x00
 #define ADS1x15_COMP_POL_RISING_EDGE      0x01
 
-#define ADS1x15_COMP_POL_LATCH            0x00
-#define ADS1x15_COMP_POL_NOLATCH          0x01
-
+//  PARAM setComparatorLatch()
+#define ADS1x15_COMP_POL_NOLATCH          0x00
+#define ADS1x15_COMP_POL_LATCH            0x01
 
 
 class ADS1X15

@@ -35,17 +35,55 @@ unittest_teardown()
 }
 
 
-unittest(test_constants_I)
+unittest(test_constants_1)
 {
   assertEqual(0x48, ADS1015_ADDRESS);
   assertEqual(0x48, ADS1115_ADDRESS);
+}
 
+
+unittest(test_constants_error_codes)
+{
   assertEqual(   0, ADS1X15_OK);
   assertEqual(-100, ADS1X15_INVALID_VOLTAGE);
   assertEqual(-101, ADS1X15_ERROR_TIMEOUT);
   assertEqual(-102, ADS1X15_ERROR_I2C);
   assertEqual(0xFF, ADS1X15_INVALID_GAIN);
   assertEqual(0xFE, ADS1X15_INVALID_MODE);
+}
+
+
+unittest(test_constants_parameters)
+{
+//  PARAMETER setDataRate()
+  assertEqual(0x00, ADS1X15_DATARATE_0);
+  assertEqual(0x01, ADS1X15_DATARATE_1);
+  assertEqual(0x02, ADS1X15_DATARATE_2);
+  assertEqual(0x03, ADS1X15_DATARATE_3);
+  assertEqual(0x04, ADS1X15_DATARATE_4);
+  assertEqual(0x05, ADS1X15_DATARATE_5);
+  assertEqual(0x06, ADS1X15_DATARATE_6);
+  assertEqual(0x07, ADS1X15_DATARATE_7);
+
+//  PARAMETER setGain()
+  assertEqual(0x00, ADS1X15_GAIN_6144MV);
+  assertEqual(0x01, ADS1X15_GAIN_4096MV);
+  assertEqual(0x02, ADS1X15_GAIN_2048MV);
+  assertEqual(0x04, ADS1X15_GAIN_1024MV);
+  assertEqual(0x08, ADS1X15_GAIN_0512MV);
+  assertEqual(0x10, ADS1X15_GAIN_0256MV);
+
+//  PARAMETER setComparatorMode()
+  assertEqual(0x00, ADS1x15_COMP_MODE_TRADITIONAL);
+  assertEqual(0x01, ADS1x15_COMP_MODE_WINDOW);
+
+//  PARAMETER setComparatorPolarity()
+  assertEqual(0x00, ADS1x15_COMP_POL_FALLING_EDGE);
+  assertEqual(0x01, ADS1x15_COMP_POL_RISING_EDGE);
+
+//  PARAM setComparatorLatch()
+  assertEqual(0x00, ADS1x15_COMP_POL_NOLATCH);
+  assertEqual(0x01, ADS1x15_COMP_POL_LATCH);
 }
 
 
