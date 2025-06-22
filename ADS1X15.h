@@ -70,6 +70,12 @@
 #define ADS1x15_COMP_POL_NOLATCH          0x00
 #define ADS1x15_COMP_POL_LATCH            0x01
 
+//  PARAM setComparatorQueConvert()
+#define ADS1x15_COMP_QUE_CONV_TRIGGER_1   0x00
+#define ADS1x15_COMP_QUE_CONV_TRIGGER_2   0x01
+#define ADS1x15_COMP_QUE_CONV_TRIGGER_4   0x02
+#define ADS1x15_COMP_QUE_CONV_DISABLE     0x03
+
 
 class ADS1X15
 {

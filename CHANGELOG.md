@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - update parameter constants section in .h file
 - update keywords.txt
 - update unit_tests (constants)
+- update readme.md
 - minor edits
 
 ## [0.5.2] - 2025-01-27

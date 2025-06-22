@@ -205,14 +205,14 @@ Note: the gain is not set in the device until an explicit read/request of the AD
 See table below.
 - **uint8_t getGain()** returns the gain value (index).
 
-|  PGA value  |  Max Voltage  |   Notes   |
-|:-----------:|:-------------:|:---------:|
-|      0      |    ±6.144V    |  default  |
-|      1      |    ±4.096V    |           |
-|      2      |    ±2.048V    |           |
-|      4      |    ±1.024V    |           |
-|      8      |    ±0.512V    |           |
-|      16     |    ±0.256V    |           |
+|  define               |  PGA value  |  Max Voltage  |   Notes   |
+|:---------------------:|:-----------:|:-------------:|:---------:|
+|  ADS1X15_GAIN_6144MV  |      0      |    ±6.144V    |  default  |
+|  ADS1X15_GAIN_4096MV  |      1      |    ±4.096V    |           |
+|  ADS1X15_GAIN_2048MV  |      2      |    ±2.048V    |           |
+|  ADS1X15_GAIN_1024MV  |      4      |    ±1.024V    |           |
+|  ADS1X15_GAIN_0512MV  |      8      |    ±0.512V    |           |
+|  ADS1X15_GAIN_0256MV  |      16     |    ±0.256V    |           |
 
 
 - **float getMaxVoltage()** returns the max voltage with the current gain.
@@ -254,16 +254,16 @@ as that would take 32 bytes.
 
 Data rate in samples per second, based on datasheet is described on table below.
 
-|  data rate  |  ADS101x  |  ADS111x  |   Notes   |
-|:-----------:|----------:|----------:|:---------:|
-|     0       |   128     |    8      |  slowest  |
-|     1       |   250     |    16     |           |
-|     2       |   490     |    32     |           |
-|     3       |   920     |    64     |           |
-|     4       |   1600    |    128    |  default  |
-|     5       |   2400    |    250    |           |
-|     6       |   3300    |    475    |           |
-|     7       |   3300    |    860    |  fastest  |
+|  define              |  data rate  |  ADS101x  |  ADS111x  |   Notes   |
+|:--------------------:|:-----------:|----------:|----------:|:---------:|
+|  ADS1X15_DATARATE_0  |     0       |   128     |    8      |  slowest  |
+|  ADS1X15_DATARATE_1  |     1       |   250     |    16     |           |
+|  ADS1X15_DATARATE_2  |     2       |   490     |    32     |           |
+|  ADS1X15_DATARATE_3  |     3       |   920     |    64     |           |
+|  ADS1X15_DATARATE_4  |     4       |   1600    |    128    |  default  |
+|  ADS1X15_DATARATE_5  |     5       |   2400    |    250    |           |
+|  ADS1X15_DATARATE_6  |     6       |   3300    |    475    |           |
+|  ADS1X15_DATARATE_7  |     7       |   3300    |    860    |  fastest  |
 
 
 ### ReadADC Single mode

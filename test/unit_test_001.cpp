@@ -84,6 +84,12 @@ unittest(test_constants_parameters)
 //  PARAM setComparatorLatch()
   assertEqual(0x00, ADS1x15_COMP_POL_NOLATCH);
   assertEqual(0x01, ADS1x15_COMP_POL_LATCH);
+
+//  PARAM setComparatorQueConvert()
+  assertEqual(0x00, ADS1x15_COMP_QUE_CONV_TRIGGER_1);
+  assertEqual(0x01, ADS1x15_COMP_QUE_CONV_TRIGGER_2);
+  assertEqual(0x02, ADS1x15_COMP_QUE_CONV_TRIGGER_4);
+  assertEqual(0x03, ADS1x15_COMP_QUE_CONV_DISABLE);
 }
 
 
