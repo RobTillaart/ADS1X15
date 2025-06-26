@@ -97,7 +97,7 @@ public:
 
 
   //  both may return ADS1X15_INVALID_VOLTAGE if the gain is invalid.
-  float    toVoltage(int16_t value = 1); //   converts raw to voltage
+  float    toVoltage(float value = 1);   //   converts raw to voltage (can be an average!)
   float    getMaxVoltage();              //   -100 == invalid voltage error
 
 

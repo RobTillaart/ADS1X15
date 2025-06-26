@@ -189,7 +189,7 @@ uint8_t ADS1X15::getGain()
 }
 
 
-float ADS1X15::toVoltage(int16_t value)
+float ADS1X15::toVoltage(float value)
 {
   if (value == 0) return 0;
 
@@ -199,11 +199,13 @@ float ADS1X15::toVoltage(int16_t value)
   volts *= value;
   if (_config & ADS_CONF_RES_16)
   {
-    volts /= 32767;  //  value = 16 bits - sign bit = 15 bits mantissa
+    //  value = 16 bits - sign bit = 15 bits mantissa
+    volts *= 3.0518509475997E-5;  //  volts /= 32767;
   }
   else
   {
-    volts /= 2047;   //  value = 12 bits - sign bit = 11 bit mantissa
+    //  value = 12 bits - sign bit = 11 bit mantissa
+    volts *= 4.8851978505129E-4;  //  volts /= 2047;
   }
   return volts;
 }
