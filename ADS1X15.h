@@ -50,7 +50,7 @@
 #define ADS1X15_DATARATE_6                0x06
 #define ADS1X15_DATARATE_7                0x07
 
-//  PARAMETER setGain()
+//  PARAMETER setGain()    read MV as  miliVolt
 #define ADS1X15_GAIN_6144MV               0x00
 #define ADS1X15_GAIN_4096MV               0x01
 #define ADS1X15_GAIN_2048MV               0x02

@@ -22,7 +22,7 @@ you can check similar library [here](https://github.com/chandrawi/ADS1x15-ADC).
 This library should work for the devices mentioned below,
 although not all sensors support all functionality.
 
-|  Device   |  Channels  |  Resolution  |  Max sps  |  Comparator  |  Interrupts  |  ProgGainAMP  |  Notes   |
+|  Device   |  Channels  |  Resolution  |  Max SPS  |  Comparator  |  Interrupts  |  ProgGainAMP  |  Notes   |
 |:---------:|:----------:|:------------:|:---------:|:------------:|:------------:|:-------------:|:---------|
 |  ADS1013  |      1     |       12     |    3300   |       N      |       N      |        N      |          |
 |  ADS1014  |      1     |       12     |    3300   |       Y      |       Y      |        Y      |          |
@@ -216,9 +216,11 @@ See table below.
 
 
 - **float getMaxVoltage()** returns the max voltage with the current gain.
-- **float toVoltage(int16_t raw = 1)** converts a raw measurement to a voltage.
+- **float toVoltage(float raw = 1)** converts a raw measurement to a voltage.
 Can be used for normal and differential measurements.
 The default value of 1 returns the conversion factor for any raw number.
+The parameter is made float to allow the average of multiple raw measurements
+to be converted.
 
 The voltage factor can also be used to set HIGH and LOW threshold registers
 with a voltage in the comparator mode.
@@ -237,8 +239,14 @@ The ADS sensor can operate in single shot or continuous mode.
 Depending on how often conversions needed you can tune the mode.
 
 - **void setMode(uint8_t mode)** 0 = CONTINUOUS, 1 = SINGLE (default)
-Note: the mode is not set in the device until an explicit read/request of the ADC (any read call will do).
+Note: the mode is not set in the device until an explicit read/request of the ADC 
+(any successful read() call will do).
 - **uint8_t getMode()** returns current mode 0 or 1, or ADS1X15_INVALID_MODE = 0xFE.
+
+|  define                   |  value  |   Notes   |
+|:-------------------------:|:-------:|:---------:|
+|  ADS1X15_MODE_CONTINUOUS  |    0    |           |
+|  ADS1X15_MODE_SINGLE      |    1    |  default  |
 
 
 ### Data rate
@@ -493,6 +501,11 @@ signal falls below the low threshold register value.
 - **void setComparatorMode(uint8_t mode)** value 0 = TRADITIONAL 1 = WINDOW,
 - **uint8_t getComparatorMode()** returns value set.
 
+|  define                         |  value  |   Notes   |
+|:-------------------------------:|:-------:|:---------:|
+|  ADS1x15_COMP_MODE_TRADITIONAL  |    0    |           |
+|  ADS1x15_COMP_MODE_WINDOW       |    1    |           |
+
 
 If the comparator **LATCH** is set, the **ALERT/RDY** pin asserts and it will be
 reset after reading the sensor (conversion register) again.
@@ -511,6 +524,11 @@ Default state of the **ALERT/RDY** pin is **LOW**, which can be to set **HIGH**.
 - **void setComparatorPolarity(uint8_t pol)**
 Flag is only explicitly set after a **readADC()** or a **requestADC()**
 - **uint8_t getComparatorPolarity()** returns value set.
+
+|  define                         |  value  |   Notes   |
+|:-------------------------------:|:-------:|:---------:|
+|  ADS1x15_COMP_POL_FALLING_EDGE  |    0    |           |
+|  ADS1x15_COMP_POL_RISING_EDGE   |    1    |           |
 
 
 From tests (see #76) it became clear that the behaviour of the **ALERT/RDY** pin 
@@ -585,6 +603,12 @@ even if actual value has been 'restored to normal' value.
 
 - **void setComparatorLatch(uint8_t latch)** 0 = NO LATCH, not 0 = LATCH
 - **uint8_t getComparatorLatch()** returns value set.
+
+|  define                    |  value  |   Notes   |
+|:--------------------------:|:-------:|:---------:|
+|  ADS1x15_COMP_POL_NOLATCH  |    0    |           |
+|  ADS1x15_COMP_POL_LATCH    |    1    |           |
+
 
 The (no-)latch is not verified in detail yet.
 

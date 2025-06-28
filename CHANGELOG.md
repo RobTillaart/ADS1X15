@@ -6,7 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 ## [0.5.3] - 2025-06-22
-- fix #91, LATCH constants
+- fix #91, problem with LATCH constants
+- fix #90, change parameter type toVoltage(float)
+- improve performance toVoltage(float)
 - update parameter constants section in .h file
 - update keywords.txt
 - update unit_tests (constants)
