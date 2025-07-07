@@ -334,12 +334,12 @@ unittest(test_getMaxRegValue)
   ADS1114 ADS4(0x49);
   ADS1115 ADS5(0x49);
 
-  assertEqual(2047,   ADS0.getMaxRegValue());
-  assertEqual(2047,   ADS1.getMaxRegValue());
-  assertEqual(2047,   ADS2.getMaxRegValue());
-  assertEqual(326767, ADS3.getMaxRegValue());
-  assertEqual(326767, ADS4.getMaxRegValue());
-  assertEqual(326767, ADS5.getMaxRegValue());
+  assertEqual(2047,  ADS0.getMaxRegValue());
+  assertEqual(2047,  ADS1.getMaxRegValue());
+  assertEqual(2047,  ADS2.getMaxRegValue());
+  assertEqual(32767, ADS3.getMaxRegValue());
+  assertEqual(32767, ADS4.getMaxRegValue());
+  assertEqual(32767, ADS5.getMaxRegValue());
 }
 
 
