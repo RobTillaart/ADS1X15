@@ -52,7 +52,7 @@
 
 //  BIT 8       mode                         //  1 << 8
 #define ADS1X15_MODE_CONTINUE       ( 0x0000 )
-#define ADS1X15_MODE_SINGLE         ( 0x0100 )
+#define ADS1X15_MODE_ONCE           ( 0x0100 )
 
 //  BIT 5-7     data rate sample per second  //  (0..7) << 5
 /*
@@ -129,7 +129,7 @@ ADS1X15::ADS1X15()
 void ADS1X15::reset()
 {
   setGain(0);      //  _gain = ADS1X15_PGA_6_144V;
-  setMode(1);      //  _mode = ADS1X15_MODE_SINGLE;
+  setMode(1);      //  _mode = ADS1X15_MODE_ONCE;
   setDataRate(4);  //  middle speed, depends on device.
 
   //  COMPARATOR variables   #  see notes .h
@@ -233,7 +233,7 @@ void ADS1X15::setMode(uint8_t mode)
   {
     case 0: _mode = ADS1X15_MODE_CONTINUE; break;
     default:  //  catch invalid modi
-    case 1: _mode = ADS1X15_MODE_SINGLE;   break;
+    case 1: _mode = ADS1X15_MODE_ONCE;   break;
   }
 }
 
@@ -243,7 +243,7 @@ uint8_t ADS1X15::getMode(void)
   switch (_mode)
   {
     case ADS1X15_MODE_CONTINUE: return 0;
-    case ADS1X15_MODE_SINGLE:   return 1;
+    case ADS1X15_MODE_ONCE:   return 1;
   }
   _error = ADS1X15_INVALID_MODE;
   return _error;
@@ -454,7 +454,7 @@ int16_t ADS1X15::_readADC(uint16_t readmode)
   //  note readmode includes the channel
   _requestADC(readmode);
 
-  if (_mode == ADS1X15_MODE_SINGLE)
+  if (_mode == ADS1X15_MODE_ONCE)
   {
     uint32_t start = millis();
     //  timeout == { 138, 74, 42, 26, 18, 14, 12, 11 }
