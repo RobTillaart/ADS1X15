@@ -189,7 +189,7 @@ public:
   //  See #91
   inline uint16_t getMaxRegValue()
   {
-    return (_config & 0x04) ? 32767 : 2047; };
+    return (_config & 0x04) ? 32767 : 2047;
   };
 
 

@@ -668,6 +668,11 @@ This is read and reset by **getError()**
 |   0xFE  |  ADS1X15_INVALID_MODE     | getMode()
 
 
+## Experimental
+
+- **uint16_t getMaxRegValue()** returns 32767 or 2047 depending on ADC bits.
+
+
 ## Future ideas & improvements
 
 #### Must
