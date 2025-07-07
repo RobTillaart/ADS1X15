@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.5.3] - 2025-06-22
 - fix #91, problem with LATCH constants
+- add ( ) to the #defines, see #91
+- add getMaxRegValue(), see #91
 - fix #90, change parameter type toVoltage(float)
 - improve performance toVoltage(float)
 - update parameter constants section in .h file
