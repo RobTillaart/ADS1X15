@@ -39,8 +39,8 @@ differential measurements.
 
 ### Interrupts
 
-Besides polling the **ADS1x14** and **ADS1x15** support interrupts to maximize throughput 
-with minimal latency. For this these device has an ALERT/RDY pin. 
+Besides polling the **ADS1x14** and **ADS1x15** support interrupts to maximize throughput
+with minimal latency. For this these device has an ALERT/RDY pin.
 This pin can be used both for interrupts or polling, see table of examples below.
 
 |   example                         |  Interrupts  |  notes  |
@@ -56,13 +56,13 @@ This pin can be used both for interrupts or polling, see table of examples below
 
 
 The examples of this library all use the **RISING** edge for the interrupt detection
-of the ALERT / RDY pin. 
-In https://github.com/RobTillaart/ADS1X15/issues/87 it is observed that the **FALLING** 
-edge gave far more stable results for the application used (determine True RMS). 
+of the ALERT / RDY pin.
+In https://github.com/RobTillaart/ADS1X15/issues/87 it is observed that the **FALLING**
+edge gave far more stable results for the application used (determine True RMS).
 This effect can not be explained as the edges are only 8 us apart.
 Thus changing the edge to **FALLING** might improve your measurements too.
 
-Datasheet section 7.3.8 Conversion ready pin, figure 7-8 indicates using 
+Datasheet section 7.3.8 Conversion ready pin, figure 7-8 indicates using
 the **FALLING** edge as the moment the conversion is ready.
 
 If anybody can explain the observed effect, please let me know.
@@ -79,7 +79,7 @@ the setting.
 Version 0.4.0 introduced a breaking change.
 You cannot set the pins in **begin()** any more.
 This reduces the dependency of processor dependent Wire / I2C implementations.
-The user has to call **Wire.begin()** and can optionally set the I2C pins 
+The user has to call **Wire.begin()** and can optionally set the I2C pins
 before calling **begin()**.
 
 
@@ -97,7 +97,7 @@ before calling **begin()**.
 
 ## I2C Address
 
-The I2C address of the ADS1113 /14 /15 is determined by to which pin 
+The I2C address of the ADS1113 /14 /15 is determined by to which pin
 the **ADDR** is connected to:
 
 |  ADDR pin connected to  |  Address  |  Notes    |
@@ -112,15 +112,15 @@ the **ADDR** is connected to:
 
 Sometimes you need to control more devices than possible with the default
 address range the device provides.
-This is possible with an I2C multiplexer e.g. TCA9548 which creates up 
-to eight channels (think of it as I2C subnets) which can use the complete 
-address range of the device. 
+This is possible with an I2C multiplexer e.g. TCA9548 which creates up
+to eight channels (think of it as I2C subnets) which can use the complete
+address range of the device.
 
-Drawback of using a multiplexer is that it takes more administration in 
-your code e.g. which device is on which channel. 
+Drawback of using a multiplexer is that it takes more administration in
+your code e.g. which device is on which channel.
 This will slow down the access, which must be taken into account when
 deciding which devices are on which channel.
-Also note that switching between channels will slow down other devices 
+Also note that switching between channels will slow down other devices
 too if they are behind the multiplexer.
 
 - https://github.com/RobTillaart/TCA9548
@@ -166,13 +166,13 @@ For example.
   //  initialize ADS1115 on I2C bus 1 with default address 0x48
   ADS1115 ADS(0x48);
 
-  void setup() 
+  void setup()
   {
-    if (!ADS.begin()) 
+    if (!ADS.begin())
     {
       //  invalid address ADS1115 or 0x48 not found
     }
-    if (!ADS.isConnected()) 
+    if (!ADS.isConnected())
     {
       //  address 0x48 not found
     }
@@ -239,7 +239,7 @@ The ADS sensor can operate in single shot or continuous mode.
 Depending on how often conversions needed you can tune the mode.
 
 - **void setMode(uint8_t mode)** 0 = CONTINUOUS, 1 = SINGLE (default)
-Note: the mode is not set in the device until an explicit read/request of the ADC 
+Note: the mode is not set in the device until an explicit read/request of the ADC
 (any successful read() call will do).
 - **uint8_t getMode()** returns current mode 0 or 1, or ADS1X15_INVALID_MODE = 0xFE.
 
@@ -296,7 +296,7 @@ Default pin = 0 as this is convenient for the single channel devices.
 See [examples](https://github.com/RobTillaart/ADS1X15/blob/master/examples/ADS_minimum/ADS_minimum.ino).
 
 The **readADC()** can return **ADS1X15_ERROR_TIMEOUT (-101)** which is an errorcode.
-This may conflict with a possible actual value of -101. 
+This may conflict with a possible actual value of -101.
 Therefore the user should check with **getError()** if an error has occurred after reading the ADC.
 
 ```cpp
@@ -327,7 +327,7 @@ in terms of code:
   void setup()
   {
     //  other setup things here
-    ADS.setMode(1);               //  SINGLE SHOT MODE
+    ADS.setMode(ADS1X15_MODE_SINGLE);
     ADS.requestADC(pin);
   }
 
@@ -376,10 +376,10 @@ See [examples](https://github.com/RobTillaart/ADS1X15/blob/master/examples/ADS_d
 ### lastRequestMode
 
 Since 0.3.12 the library tracks the last request mode, single pin or differential.
-This variable is set at the moment of request, and keeps its value until a new 
+This variable is set at the moment of request, and keeps its value until a new
 request is made. This implies that the value / request can be quite old.
 
-Values >= 0x10 are differential, values < 0x10 are single pin. 
+Values >= 0x10 are differential, values < 0x10 are single pin.
 
 - **uint8_t lastRequest()** returns one of the values below.
 
@@ -401,7 +401,7 @@ for the following two requests:
 - **readADC_Differential_0_2()** ADS1x15 only - in software (no async equivalent)
 - **readADC_Differential_1_2()** ADS1x15 only - in software (no async equivalent)
 
-As these are emulated in software by two single pin calls, the state would be 
+As these are emulated in software by two single pin calls, the state would be
 one of the two single pin values.
 
 
@@ -417,11 +417,12 @@ Note this can be a different pin, so be warned.
 Calling this over and over again can give the same value multiple times.
 
 ```cpp
-  void setup() 
+  void setup()
   {
     //  configuration things here
-    ADS.setMode(ADS.MODE_CONTINUOUS);
-    ADS.requestADC(0);              //  request on pin 0
+    ADS.setMode(ADS1X15_MODE_CONTINUOUS);
+    //  request on pin 0
+    ADS.requestADC(0);
   }
 
   void loop()
@@ -443,9 +444,9 @@ pin to trigger an interrupt signal when conversion data ready.
 
 ### Switching mode or channel during continuous mode
 
-When switching the operating mode or the ADC channel in continuous mode, be aware that 
+When switching the operating mode or the ADC channel in continuous mode, be aware that
 the device will always finish the running conversion.
-This implies that after switching the mode or channel the first sample you get is probably 
+This implies that after switching the mode or channel the first sample you get is probably
 the last sample with the previous settings, e.g. channel.
 This might be a problem for your project as this value can be in an "unexpected" range (outlier).
 
@@ -531,8 +532,8 @@ Flag is only explicitly set after a **readADC()** or a **requestADC()**
 |  ADS1x15_COMP_POL_RISING_EDGE   |    1    |           |
 
 
-From tests (see #76) it became clear that the behaviour of the **ALERT/RDY** pin 
-looks ambiguous. Further investigation eventually showed that the behaviour is 
+From tests (see #76) it became clear that the behaviour of the **ALERT/RDY** pin
+looks ambiguous. Further investigation eventually showed that the behaviour is
 logical but one should not think in "pulses", more in levels and edges.
 
 In the continuous mode it looks like an 8us pulse, however this "pulse" is
@@ -577,16 +578,16 @@ Times are estimates from scope.
 
 - Conversion generates a conversion pulse with length depending on the data rate.
 - In continuous mode it looks like there is a short pulse, but actual the long
-  period is the conversion pulse. 
+  period is the conversion pulse.
 
 In short:
 
-- if COMP_POL = 0, 
+- if COMP_POL = 0,
   - a LOW level indicates converting.
   - a RISING edge indicates conversion completing.
   - a FALLING edge indicates conversion ready.
 
-- if COMP_POL = 1, 
+- if COMP_POL = 1,
   - a HIGH level indicates converting.
   - a FALLING edge indicates conversion completing.
   - a RISING edge indicates conversion ready.
@@ -619,7 +620,7 @@ Set the number of conversions before trigger activates.
 
 The **void setComparatorQueConvert(uint8_t mode)** is used to set the number of
 conversions that exceed the threshold before the **ALERT/RDY** pin is set **HIGH**.
-A value of 3 (or above) effectively disables the comparator. See table below. 
+A value of 3 (or above) effectively disables the comparator. See table below.
 
 See [examples](https://github.com/RobTillaart/ADS1X15/blob/master/examples/ADS_continuous_differential/ADS_continuous_differential.ino).
 
@@ -634,7 +635,7 @@ See [examples](https://github.com/RobTillaart/ADS1X15/blob/master/examples/ADS_c
 |    3    |  Disable comparator                 |  default  |
 |  other  |  Disable comparator                 |           |
 
-To enable the conversion-ready function of the **ALERT/RDY** pin, 
+To enable the conversion-ready function of the **ALERT/RDY** pin,
 it is necessary to set the MSB of the Hi_threshold register to 1 (value 0x8000)
 and the MSB of the Lo_threshold register to 0.
 See section **Threshold registers** above.
@@ -656,7 +657,7 @@ mean something different see - Comparator Mode above or datasheet.
 This section has to be elaborated.
 
 Some functions return or set an error value.
-This is read and reset by **getError()** 
+This is read and reset by **getError()**.
 
 |  Value  |  Define                   |  Description  |
 |:-------:|:-------------------------:|:-------------:|
@@ -664,7 +665,7 @@ This is read and reset by **getError()**
 |   -100  |  ADS1X15_INVALID_VOLTAGE  | getMaxVoltage()
 |   -101  |  ADS1X15_ERROR_TIMEOUT    | readADC() device did not respond in time.
 |   -102  |  ADS1X15_ERROR_I2C        | I2C communication failure.
-|   0xFF  |  ADS1X15_INVALID_GAIN     | getGain() 
+|   0xFF  |  ADS1X15_INVALID_GAIN     | getGain()
 |   0xFE  |  ADS1X15_INVALID_MODE     | getMode()
 
 
