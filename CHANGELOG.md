@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - fix #90, change parameter type toVoltage(float)
 - improve performance toVoltage(float)
 - update parameter constants section in .h file
+- update readme.md, interrupt and ALERT/RDY section (kudos to ejdp62)
 - update keywords.txt
 - update unit_tests (constants)
 - update readme.md

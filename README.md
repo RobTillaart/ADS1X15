@@ -32,7 +32,7 @@ although not all sensors support all functionality.
 |  ADS1115  |      4     |       16     |    860    |       Y      |       Y      |        Y      |  Tested  |
 
 
-As the ADS1015 and the ADS1115 are both 4 channels these are the most
+As the **ADS1015** and the **ADS1115** are both 4 channels these are the most
 interesting from functionality point of view as these can do
 differential measurements.
 
@@ -56,7 +56,7 @@ This pin can be used both for interrupts or polling, see table of examples below
 
 
 The examples of this library all use the **RISING** edge for the interrupt detection
-of the ALERT / RDY pin.
+of the **ALERT / RDY** pin.
 In https://github.com/RobTillaart/ADS1X15/issues/87 it is observed that the **FALLING**
 edge gave far more stable results for the application used (determine True RMS).
 This effect can not be explained as the edges are only 8 us apart.
@@ -65,7 +65,26 @@ Thus changing the edge to **FALLING** might improve your measurements too.
 Datasheet section 7.3.8 Conversion ready pin, figure 7-8 indicates using
 the **FALLING** edge as the moment the conversion is ready.
 
-If anybody can explain the observed effect, please let me know.
+
+ejdp62 explained the detailed behaviour of the ALERT / RDY pin
+See https://github.com/RobTillaart/ADS1X15/issues/87#issuecomment-2988617290
+
+_As the **ALERT/RDY** pin is open collector, the rising edges of the output signal 
+and the falling edges of the output signal are quite different! 
+All the scope pictures show this difference. 
+**The falling edges are much more clearly defined, because the signal 
+is actively pulled low**, whereas it is only passively pulled high. 
+And that is true regardless of the polarity chosen, as it is a consequence 
+of the output cell in the chip (open collector driver), and not of the signal 
+that the I/O cell is passing to the ready pin. I think this does explain all 
+observations made._
+
+_Now that the data sheet has been updated to explicitly show that the conversion 
+is ready on the second slope of the pulse, it is clear what to do best: 
+set the polarity such that that second slope is falling (as that is the superior direction), 
+and use that one to trigger the interrupt. 
+It may be appropriate to adapt the code in the library to implement only that choice, 
+as it will indeed give the best results._
 
 
 ### 0.5.0 Breaking change
@@ -553,7 +572,9 @@ as that is the only single change visible. This is IMHO the correct view.
 | 1 = single     |  1 = HIGH  |  HIGH     |   FALLING    |  RISING   |
 
 
-See issue #76 and #87 for some screenshots.
+See issue #76 and #87 for some screenshots with an oscilloscope.
+Furthermore #87 gives an explanation why to prefer the FALLING edges (from ejdp62).
+See also above in description section.
 
 See also [Rev. D data sheet, Page 17 Figure 7-8 Conversion Ready Pulse in Continuous-Conversion Mode](https://www.ti.com/lit/ds/symlink/ads1115.pdf)
 
@@ -582,12 +603,12 @@ Times are estimates from scope.
 
 In short:
 
-- if COMP_POL = 0,
+- if COMP_POL == 0,
   - a LOW level indicates converting.
   - a RISING edge indicates conversion completing.
   - a FALLING edge indicates conversion ready.
 
-- if COMP_POL = 1,
+- if COMP_POL == 1,
   - a HIGH level indicates converting.
   - a FALLING edge indicates conversion completing.
   - a RISING edge indicates conversion ready.
