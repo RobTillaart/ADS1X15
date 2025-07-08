@@ -671,7 +671,7 @@ This is read and reset by **getError()**.
 
 ## Experimental
 
-- **uint16_t getMaxRegValue()** returns 32767 or 2047 depending on ADC bits.
+- **uint16_t getMaxRegValue()** returns 32767 or 2047 depending on ADC bits. (See #91).
 
 
 ## Future ideas & improvements
@@ -683,11 +683,11 @@ This is read and reset by **getError()**.
 
 #### Should
 
-- Remove the experimental **getWireClock()** as this is not really a library function
-  but a responsibility of the I2C library.
 - Investigate ADS1118 library which should be a similar SPI based ADC.
 - improve error handling
   - refactor values to be more logic.
+- improve API. https://github.com/RobTillaart/ADS1X15/issues/84
+  - (big) breaking change!
 
 #### Could
 
@@ -698,6 +698,9 @@ This is read and reset by **getError()**.
 
 - Type flag?
 - Constructor for ADS1X15? No as all types are supported.
+- Remove **getWireClock()** as this is not an ADC library function
+  but a responsibility of the I2C library. Until fixed in Wire I leave it.
+
 
 ## Support
 

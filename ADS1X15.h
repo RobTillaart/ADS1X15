@@ -180,13 +180,18 @@ public:
 
   //  EXPERIMENTAL
   //  see https://github.com/RobTillaart/ADS1X15/issues/22
+  //      to be removed when next issue is solved
+  //      https://github.com/arduino/Arduino/issues/11457
   void     setWireClock(uint32_t clockSpeed = 100000);
   //  prototype
   //  - getWireClock returns the value set by setWireClock
-  //    not necessary the actual value
+  //    not necessary the actual value as it can be overwritten
+  //    by other code.
   uint32_t getWireClock();
 
-  //  See #91
+  //  EXPERIMENTAL
+  //  see https://github.com/RobTillaart/ADS1X15/issues/91
+  //  returns the max raw value when reading.
   inline uint16_t getMaxRegValue()
   {
     return (_config & 0x04) ? 32767 : 2047;
