@@ -90,6 +90,13 @@
 class ADS1X15
 {
 public:
+  //  META INFORMATION
+  static const char * LibName()    { return "ADS1X15"; };
+  static const char * LibVersion() { return "0.6.1"; };
+  static const char * LibURL()     { return "https://github.com/RobTillaart/ADS1X15"; };
+  static const char * LibAuthor()  { return "Rob Tillaart"; };
+
+  //  CLASS
   void     reset();
 
   bool     begin();
