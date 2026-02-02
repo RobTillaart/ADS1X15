@@ -24,6 +24,13 @@ void setup()
   Serial.println(ADS.LibVersion());
   Serial.println(ADS.LibURL());
   Serial.println(ADS.LibAuthor());
+  Serial.println();
+
+  Serial.print(ADS1115::LibName());
+  Serial.print(": ");
+  Serial.println(ADS1115::LibVersion());
+  Serial.println(ADS1115::LibURL());
+  Serial.println(ADS1115::LibAuthor());
 }
 
 
