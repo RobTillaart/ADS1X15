@@ -8,99 +8,114 @@
 //     URL: https://github.com/RobTillaart/ADS1X15
 //
 
-
 #include "Arduino.h"
 #include "Wire.h"
 
-#define ADS1X15_LIB_VERSION               (F("0.6.1"))
+#define ADS1X15_LIB_VERSION (F("0.6.1"))
 
 //  allow compile time default address
 //  address in { 0x48, 0x49, 0x4A, 0x4B }, no test...
 #ifndef ADS1015_ADDRESS
-#define ADS1015_ADDRESS                   ( 0x48 )
+#define ADS1015_ADDRESS (0x48)
 #endif
 
 #ifndef ADS1115_ADDRESS
-#define ADS1115_ADDRESS                   ( 0x48 )
+#define ADS1115_ADDRESS (0x48)
 #endif
 
-
 //  ERROR CONSTANTS
-#define ADS1X15_OK                        ( 0 )
-#define ADS1X15_INVALID_VOLTAGE           ( -100 )
-#define ADS1X15_ERROR_TIMEOUT             ( -101 )
-#define ADS1X15_ERROR_I2C                 ( -102 )
-#define ADS1X15_INVALID_GAIN              ( 0xFF )
-#define ADS1X15_INVALID_MODE              ( 0xFE )
-
+#define ADS1X15_OK (0)
+#define ADS1X15_INVALID_VOLTAGE (-100)
+#define ADS1X15_ERROR_TIMEOUT (-101)
+#define ADS1X15_ERROR_I2C (-102)
+#define ADS1X15_INVALID_GAIN (0xFF)
+#define ADS1X15_INVALID_MODE (0xFE)
 
 //  PARAMETER CONSTANTS (not used in the code)
 
 //  PARAMETER setMode()
-#define ADS1X15_MODE_CONTINUOUS           ( 0x00 )
-#define ADS1X15_MODE_SINGLE               ( 0x01 )
+#define ADS1X15_MODE_CONTINUOUS (0x00)
+#define ADS1X15_MODE_SINGLE (0x01)
 
 //  PARAMETER setDataRate()
-#define ADS1X15_DATARATE_0                ( 0x00 )
-#define ADS1X15_DATARATE_1                ( 0x01 )
-#define ADS1X15_DATARATE_2                ( 0x02 )
-#define ADS1X15_DATARATE_3                ( 0x03 )
-#define ADS1X15_DATARATE_4                ( 0x04 )
-#define ADS1X15_DATARATE_5                ( 0x05 )
-#define ADS1X15_DATARATE_6                ( 0x06 )
-#define ADS1X15_DATARATE_7                ( 0x07 )
+#define ADS1X15_DATARATE_0 (0x00)
+#define ADS1X15_DATARATE_1 (0x01)
+#define ADS1X15_DATARATE_2 (0x02)
+#define ADS1X15_DATARATE_3 (0x03)
+#define ADS1X15_DATARATE_4 (0x04)
+#define ADS1X15_DATARATE_5 (0x05)
+#define ADS1X15_DATARATE_6 (0x06)
+#define ADS1X15_DATARATE_7 (0x07)
+
+//  enum ?
+
+#define ADS1115_8_SPS (ADS1X15_DATARATE_0)
+#define ADS1115_16_SPS (ADS1X15_DATARATE_1)
+#define ADS1115_32_SPS (ADS1X15_DATARATE_2)
+#define ADS1115_64_SPS (ADS1X15_DATARATE_3)
+#define ADS1115_128_SPS (ADS1X15_DATARATE_4)
+#define ADS1115_250_SPS (ADS1X15_DATARATE_5)
+#define ADS1115_475_SPS (ADS1X15_DATARATE_6)
+#define ADS1115_860_SPS (ADS1X15_DATARATE_7)
+
+#define ADS1015_128_SPS (ADS1115_8_SPS)
+#define ADS1015_250_SPS (ADS1115_16_SPS)
+#define ADS1015_490_SPS (ADS1115_32_SPS)
+#define ADS1015_920_SPS (ADS1115_64_SPS)
+#define ADS1015_1600_SPS (ADS1115_128_SPS)
+#define ADS1015_2400_SPS (ADS1115_250_SPS)
+#define ADS1015_3300_SPS (ADS1115_475_SPS)
+#define ADS1015_3300_SPS_2 (ADS1115_860_SPS)
 
 //  PARAMETER setGain()    read MV as  miliVolt
-#define ADS1X15_GAIN_6144MV               ( 0x00 )
-#define ADS1X15_GAIN_4096MV               ( 0x01 )
-#define ADS1X15_GAIN_2048MV               ( 0x02 )
-#define ADS1X15_GAIN_1024MV               ( 0x04 )
-#define ADS1X15_GAIN_0512MV               ( 0x08 )
-#define ADS1X15_GAIN_0256MV               ( 0x10 )
+#define ADS1X15_GAIN_6144MV (0x00)
+#define ADS1X15_GAIN_4096MV (0x01)
+#define ADS1X15_GAIN_2048MV (0x02)
+#define ADS1X15_GAIN_1024MV (0x04)
+#define ADS1X15_GAIN_0512MV (0x08)
+#define ADS1X15_GAIN_0256MV (0x10)
 
 //  PARAMETER setComparatorMode()
-#define ADS1x15_COMP_MODE_TRADITIONAL     ( 0x00 )
-#define ADS1x15_COMP_MODE_WINDOW          ( 0x01 )
+#define ADS1x15_COMP_MODE_TRADITIONAL (0x00)
+#define ADS1x15_COMP_MODE_WINDOW (0x01)
 
 //  PARAMETER setComparatorPolarity()
-#define ADS1x15_COMP_POL_FALLING_EDGE     ( 0x00 )
-#define ADS1x15_COMP_POL_RISING_EDGE      ( 0x01 )
+#define ADS1x15_COMP_POL_FALLING_EDGE (0x00)
+#define ADS1x15_COMP_POL_RISING_EDGE (0x01)
 
 //  PARAMETER setComparatorLatch()
-#define ADS1x15_COMP_POL_NOLATCH          ( 0x00 )
-#define ADS1x15_COMP_POL_LATCH            ( 0x01 )
+#define ADS1x15_COMP_POL_NOLATCH (0x00)
+#define ADS1x15_COMP_POL_LATCH (0x01)
 
 //  PARAMETER setComparatorQueConvert()
-#define ADS1x15_COMP_QUE_CONV_TRIGGER_1   ( 0x00 )
-#define ADS1x15_COMP_QUE_CONV_TRIGGER_2   ( 0x01 )
-#define ADS1x15_COMP_QUE_CONV_TRIGGER_4   ( 0x02 )
-#define ADS1x15_COMP_QUE_CONV_DISABLE     ( 0x03 )
-
+#define ADS1x15_COMP_QUE_CONV_TRIGGER_1 (0x00)
+#define ADS1x15_COMP_QUE_CONV_TRIGGER_2 (0x01)
+#define ADS1x15_COMP_QUE_CONV_TRIGGER_4 (0x02)
+#define ADS1x15_COMP_QUE_CONV_DISABLE (0x03)
 
 //  GAIN TO VOLTAGE FULL SCALE (See #91)
 //  used in getMaxVoltage()
-#define ADS1x15_GAIN_6144MV_FSRANGE_V     ( 6.144 )
-#define ADS1x15_GAIN_4096MV_FSRANGE_V     ( 4.096 )
-#define ADS1x15_GAIN_2048MV_FSRANGE_V     ( 2.048 )
-#define ADS1x15_GAIN_1024MV_FSRANGE_V     ( 1.024 )
-#define ADS1x15_GAIN_0512MV_FSRANGE_V     ( 0.512 )
-#define ADS1x15_GAIN_0256MV_FSRANGE_V     ( 0.256 )
-
+#define ADS1x15_GAIN_6144MV_FSRANGE_V (6.144)
+#define ADS1x15_GAIN_4096MV_FSRANGE_V (4.096)
+#define ADS1x15_GAIN_2048MV_FSRANGE_V (2.048)
+#define ADS1x15_GAIN_1024MV_FSRANGE_V (1.024)
+#define ADS1x15_GAIN_0512MV_FSRANGE_V (0.512)
+#define ADS1x15_GAIN_0256MV_FSRANGE_V (0.256)
 
 class ADS1X15
 {
 public:
   //  META INFORMATION
-  static const char * LibName()    { return "ADS1X15"; };
-  static const char * LibVersion() { return "0.6.1"; };
-  static const char * LibURL()     { return "https://github.com/RobTillaart/ADS1X15"; };
-  static const char * LibAuthor()  { return "Rob Tillaart"; };
+  static const char *LibName() { return "ADS1X15"; };
+  static const char *LibVersion() { return "0.6.1"; };
+  static const char *LibURL() { return "https://github.com/RobTillaart/ADS1X15"; };
+  static const char *LibAuthor() { return "Rob Tillaart"; };
 
   //  CLASS
-  void     reset();
+  void reset();
 
-  bool     begin();
-  bool     isConnected();
+  bool begin();
+  bool isConnected();
 
   //           GAIN
   //  0  =  +- 6.144V  default
@@ -109,89 +124,86 @@ public:
   //  4  =  +- 1.024V
   //  8  =  +- 0.512V
   //  16 =  +- 0.256V
-  void     setGain(uint8_t gain = 0);    //  invalid values are mapped to 0 (default).
-  uint8_t  getGain();                    //  0xFF == invalid gain error.
+  void setGain(uint8_t gain = 0); //  invalid values are mapped to 0 (default).
+  uint8_t getGain();              //  0xFF == invalid gain error.
 
   //  both return ADS1X15_INVALID_VOLTAGE if the gain is invalid.
-  float    toVoltage(float value = 1);   //  converts raw to voltage (can be an average!)
-  float    getMaxVoltage();              //  returns voltage with current gain
+  float toVoltage(float value = 1); //  converts raw to voltage (can be an average!)
+  float getMaxVoltage();            //  returns voltage with current gain
 
   //  MODE
   //  0  =  CONTINUOUS
   //  1  =  SINGLE       default
-  void     setMode(uint8_t mode = 1);    //  invalid values are mapped to 1 (default)
-  uint8_t  getMode();                    //  0xFE == invalid mode error.
+  void setMode(uint8_t mode = 1); //  invalid values are mapped to 1 (default)
+  uint8_t getMode();              //  0xFE == invalid mode error.
 
   //  DATARATE
   //  0  =  slowest
   //  7  =  fastest
   //  4  =  default
-  void     setDataRate(uint8_t dataRate = 4);  //  invalid values are mapped on 4 (default)
-  uint8_t  getDataRate();                      //  actual speed depends on device
+  void setDataRate(uint8_t dataRate = 4); //  invalid values are mapped on 4 (default)
+  uint8_t getDataRate();                  //  actual speed depends on device
 
   //  READ
-  int16_t  readADC(uint8_t pin = 0);
-  int16_t  readADC_Differential_0_1();
+  int16_t readADC(uint8_t pin = 0);
+  int16_t readADC_Differential_0_1();
 
   //  used by continuous mode and async mode.
   //  [[deprecated("Use getValue() instead")]]
   //  int16_t  getLastValue() { return getValue(); };  //  will be obsolete in the future 0.4.0
-  int16_t  getValue();
-
+  int16_t getValue();
 
   //  ASYNC INTERFACE
   //  requestADC(pin) -> isBusy() or isReady() -> getValue();
   //  see examples
-  void     requestADC(uint8_t pin = 0);
-  void     requestADC_Differential_0_1();
-  bool     isBusy();
-  bool     isReady();
+  void requestADC(uint8_t pin = 0);
+  void requestADC_Differential_0_1();
+  bool isBusy();
+  bool isReady();
 
   //  returns a pin 0x0[0..3] or
   //          a differential "mode" 0x[pin second][pin first] or
   //          0xFF (no request / invalid request)
-  uint8_t  lastRequest();
-
+  uint8_t lastRequest();
 
   //  COMPARATOR
   //  0    = TRADITIONAL   > high          => on      < low   => off
   //  else = WINDOW        > high or < low => on      between => off
-  void     setComparatorMode(uint8_t mode);
-  uint8_t  getComparatorMode();
+  void setComparatorMode(uint8_t mode);
+  uint8_t getComparatorMode();
   //  fix #94, set comparator off for low power mode. (needs verification).
-  bool     setComparatorOff();
+  bool setComparatorOff();
 
   //  0    = LOW (default)
   //  else = HIGH
-  void     setComparatorPolarity(uint8_t pol);
-  uint8_t  getComparatorPolarity();
+  void setComparatorPolarity(uint8_t pol);
+  uint8_t getComparatorPolarity();
 
   //  0    = NON LATCH
   //  else = LATCH
-  void     setComparatorLatch(uint8_t latch);
-  uint8_t  getComparatorLatch();
+  void setComparatorLatch(uint8_t latch);
+  uint8_t getComparatorLatch();
 
   //  0   = trigger alert after 1 conversion
   //  1   = trigger alert after 2 conversions
   //  2   = trigger alert after 4 conversions
   //  3   = Disable comparator =  default, also for all other values.
-  void     setComparatorQueConvert(uint8_t mode);
-  uint8_t  getComparatorQueConvert();
+  void setComparatorQueConvert(uint8_t mode);
+  uint8_t getComparatorQueConvert();
 
-  void     setComparatorThresholdLow(int16_t lo);
-  int16_t  getComparatorThresholdLow();
-  void     setComparatorThresholdHigh(int16_t hi);
-  int16_t  getComparatorThresholdHigh();
+  void setComparatorThresholdLow(int16_t lo);
+  int16_t getComparatorThresholdLow();
+  void setComparatorThresholdHigh(int16_t hi);
+  int16_t getComparatorThresholdHigh();
 
   //  ERROR HANDLING
-  int8_t   getError();
-
+  int8_t getError();
 
   //  EXPERIMENTAL
   //  see https://github.com/RobTillaart/ADS1X15/issues/22
   //      to be removed when next issue is solved
   //      https://github.com/arduino/Arduino/issues/11457
-  void     setWireClock(uint32_t clockSpeed = 100000);
+  void setWireClock(uint32_t clockSpeed = 100000);
   //  prototype
   //  - getWireClock returns the value set by setWireClock
   //    not necessary the actual value as it can be overwritten
@@ -206,7 +218,6 @@ public:
     return (_config & 0x04) ? 32767 : 2047;
   };
 
-
 protected:
   ADS1X15();
 
@@ -220,11 +231,11 @@ protected:
   //  5     has comparator    0 = NO    1 = YES
   //  6     0
   //  7     0
-  uint8_t  _config;
-  uint8_t  _maxPorts;
-  uint8_t  _address;
-  uint8_t  _conversionDelay;
-  uint8_t  _bitShift;
+  uint8_t _config;
+  uint8_t _maxPorts;
+  uint8_t _address;
+  uint8_t _conversionDelay;
+  uint8_t _bitShift;
   uint16_t _gain;
   uint16_t _mode;
   uint16_t _datarate;
@@ -234,26 +245,25 @@ protected:
   //       would speed up code in _requestADC() and save 3 bytes RAM.
   //  TODO boolean flags for first three, or make it mask value that
   //       can be or-ed.   (low priority)
-  uint8_t  _compMode;
-  uint8_t  _compPol;
-  uint8_t  _compLatch;
-  uint8_t  _compQueConvert;
+  uint8_t _compMode;
+  uint8_t _compPol;
+  uint8_t _compLatch;
+  uint8_t _compQueConvert;
 
   //  variable to track the last pin requested,
   //  to allow for round robin query of
   //  pins based on this state == if no last request then == 0xFFFF.
-  uint16_t  _lastRequest;
+  uint16_t _lastRequest;
 
-  int16_t  _readADC(uint16_t readmode);
-  void     _requestADC(uint16_t readmode);
-  bool     _writeRegister(uint8_t address, uint8_t reg, uint16_t value);
+  int16_t _readADC(uint16_t readmode);
+  void _requestADC(uint16_t readmode);
+  bool _writeRegister(uint8_t address, uint8_t reg, uint16_t value);
   uint16_t _readRegister(uint8_t address, uint8_t reg);
-  int8_t   _error = ADS1X15_OK;
+  int8_t _error = ADS1X15_OK;
 
-  TwoWire*  _wire;
-  uint32_t  _clockSpeed = 0;
+  TwoWire *_wire;
+  uint32_t _clockSpeed = 0;
 };
-
 
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -267,28 +277,25 @@ public:
   uint8_t getGain();
 };
 
-
 class ADS1014 : public ADS1X15
 {
 public:
   ADS1014(uint8_t Address = ADS1015_ADDRESS, TwoWire *wire = &Wire);
 };
 
-
 class ADS1015 : public ADS1X15
 {
 public:
   ADS1015(uint8_t Address = ADS1015_ADDRESS, TwoWire *wire = &Wire);
-  int16_t  readADC_Differential_0_3();
-  int16_t  readADC_Differential_1_3();
-  int16_t  readADC_Differential_2_3();
-  int16_t  readADC_Differential_0_2();   //  not possible in async
-  int16_t  readADC_Differential_1_2();   //  not possible in async
-  void     requestADC_Differential_0_3();
-  void     requestADC_Differential_1_3();
-  void     requestADC_Differential_2_3();
+  int16_t readADC_Differential_0_3();
+  int16_t readADC_Differential_1_3();
+  int16_t readADC_Differential_2_3();
+  int16_t readADC_Differential_0_2(); //  not possible in async
+  int16_t readADC_Differential_1_2(); //  not possible in async
+  void requestADC_Differential_0_3();
+  void requestADC_Differential_1_3();
+  void requestADC_Differential_2_3();
 };
-
 
 class ADS1113 : public ADS1X15
 {
@@ -298,28 +305,24 @@ public:
   uint8_t getGain();
 };
 
-
 class ADS1114 : public ADS1X15
 {
 public:
   ADS1114(uint8_t address = ADS1115_ADDRESS, TwoWire *wire = &Wire);
 };
 
-
 class ADS1115 : public ADS1X15
 {
 public:
   ADS1115(uint8_t address = ADS1115_ADDRESS, TwoWire *wire = &Wire);
-  int16_t  readADC_Differential_0_3();
-  int16_t  readADC_Differential_1_3();
-  int16_t  readADC_Differential_2_3();
-  int16_t  readADC_Differential_0_2();   //  not possible in async
-  int16_t  readADC_Differential_1_2();   //  not possible in async
-  void     requestADC_Differential_0_3();
-  void     requestADC_Differential_1_3();
-  void     requestADC_Differential_2_3();
+  int16_t readADC_Differential_0_3();
+  int16_t readADC_Differential_1_3();
+  int16_t readADC_Differential_2_3();
+  int16_t readADC_Differential_0_2(); //  not possible in async
+  int16_t readADC_Differential_1_2(); //  not possible in async
+  void requestADC_Differential_0_3();
+  void requestADC_Differential_1_3();
+  void requestADC_Differential_2_3();
 };
 
-
 //  -- END OF FILE --
-
